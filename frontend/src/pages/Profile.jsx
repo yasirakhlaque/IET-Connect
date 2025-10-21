@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
 import { FaEdit, FaMoon, FaSun, FaDownload, FaStar } from "react-icons/fa";
-import { IoCalendar } from "react-icons/io5";
 import EditProfileForm from "../components/EditProfileForm";
 
 export default function Profile() {
@@ -15,7 +14,7 @@ export default function Profile() {
     const [user, setUser] = useState(null);
     const [uploads, setUploads] = useState([]);
     const [downloads, setDownloads] = useState([]);
-    const [showAddEditProfileForm, setShowAddEditProfileForm] = useState(true);
+    const [showAddEditProfileForm, setShowAddEditProfileForm] = useState(false);
 
     // Fetch user data from localStorage on component mount
     useEffect(() => {
