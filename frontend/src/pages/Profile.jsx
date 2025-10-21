@@ -16,15 +16,12 @@ export default function Profile() {
     const [downloads, setDownloads] = useState([]);
     const [showAddEditProfileForm, setShowAddEditProfileForm] = useState(false);
 
-    // Fetch user data from localStorage on component mount
     useEffect(() => {
         const fetchUserData = () => {
             try {
-                // Get user data from localStorage
                 const storedUser = localStorage.getItem("user");
                 const token = localStorage.getItem("token");
 
-                // If no token, redirect to login
                 if (!token) {
                     navigate("/login");
                     return;
@@ -36,7 +33,7 @@ export default function Profile() {
                     setUser(userData);
 
                     // TODO: Fetch user's uploads and downloads from API
-                    // For now, we'll use empty arrays until you create the API endpoints
+                    // For now, I'll use empty arrays until you create the API endpoints
                     // fetchUserUploads(userData._id);
                     // fetchUserDownloads(userData._id);
                 }
@@ -55,7 +52,6 @@ export default function Profile() {
     const fetchUserUploads = async (userId) => {
         try {
             const token = localStorage.getItem("token");
-            // TODO: Replace with your actual API endpoint
             // const response = await axios.get(`http://localhost:3000/api/uploads/user/${userId}`, {
             //     headers: { Authorization: `Bearer ${token}` }
             // });
@@ -72,7 +68,6 @@ export default function Profile() {
     const fetchUserDownloads = async (userId) => {
         try {
             const token = localStorage.getItem("token");
-            // TODO: Replace with your actual API endpoint
             // const response = await axios.get(`http://localhost:3000/api/downloads/user/${userId}`, {
             //     headers: { Authorization: `Bearer ${token}` }
             // });
