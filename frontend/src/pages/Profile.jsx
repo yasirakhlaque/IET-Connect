@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
 import { FaEdit, FaMoon, FaSun, FaDownload, FaStar } from "react-icons/fa";
 import EditProfileForm from "../components/EditProfileForm";
+import { questionPaperAPI } from "../lib/api";
 
 export default function Profile() {
     const { theme } = useContext(ThemeContext);
@@ -17,7 +18,7 @@ export default function Profile() {
     const [showAddEditProfileForm, setShowAddEditProfileForm] = useState(false);
 
     useEffect(() => {
-        const fetchUserData = () => {
+        const fetchUserData = async () => {
             try {
                 const storedUser = localStorage.getItem("user");
                 const token = localStorage.getItem("token");
@@ -32,10 +33,8 @@ export default function Profile() {
                     const userData = JSON.parse(storedUser);
                     setUser(userData);
 
-                    // TODO: Fetch user's uploads and downloads from API
-                    // For now, I'll use empty arrays until you create the API endpoints
-                    // fetchUserUploads(userData._id);
-                    // fetchUserDownloads(userData._id);
+                    // Fetch user's uploads
+                    await fetchUserUploads();
                 }
 
                 setLoading(false);
@@ -48,32 +47,21 @@ export default function Profile() {
         fetchUserData();
     }, [navigate]);
 
-    // Function to fetch user uploads (TODO: Connect to your API)
-    const fetchUserUploads = async (userId) => {
+    // Function to fetch user uploads
+    const fetchUserUploads = async () => {
         try {
-            const token = localStorage.getItem("token");
-            // const response = await axios.get(`http://localhost:3000/api/uploads/user/${userId}`, {
-            //     headers: { Authorization: `Bearer ${token}` }
-            // });
-            // setUploads(response.data);
-
-            // For now, keeping empty
-            setUploads([]);
+            const response = await questionPaperAPI.getMyUploads();
+            setUploads(response.data.questionPapers || []);
         } catch (error) {
             console.error("Error fetching uploads:", error);
+            setUploads([]);
         }
     };
 
-    // Function to fetch user downloads (TODO: Connect to your API)
+    // Function to fetch user downloads (TODO: Add download tracking in backend)
     const fetchUserDownloads = async (userId) => {
         try {
-            const token = localStorage.getItem("token");
-            // const response = await axios.get(`http://localhost:3000/api/downloads/user/${userId}`, {
-            //     headers: { Authorization: `Bearer ${token}` }
-            // });
-            // setDownloads(response.data);
-
-            // For now, keeping empty
+            // For now, keeping empty until download tracking is implemented
             setDownloads([]);
         } catch (error) {
             console.error("Error fetching downloads:", error);
@@ -189,7 +177,7 @@ export default function Profile() {
                                 <div className="text-center mb-6">
                                     <h2 className={`text-2xl font-bold mb-1 ${theme === "dark" ? "text-white" : "text-gray-900"
                                         }`}>
-                                        {user.rollno || 'Student'}
+                                        {user.name || user.rollno || 'Student'}
                                     </h2>
                                     <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                         }`}>
@@ -300,7 +288,7 @@ export default function Profile() {
                                 }`}>
                                 <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-purple-400" : "text-purple-600"
                                     }`}>
-                                    {activeTab === "uploads" ? uploads.filter(u => u.status === "approved").length : downloads.length}
+                                    {activeTab === "uploads" ? uploads.filter(u => u.approvalStatus === "Approved").length : downloads.length}
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                     }`}>
@@ -315,7 +303,7 @@ export default function Profile() {
                                     }`}>
                                     <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-yellow-400" : "text-yellow-600"
                                         }`}>
-                                        {uploads.filter(u => u.status === "pending").length}
+                                        {uploads.filter(u => u.approvalStatus === "Pending").length}
                                     </div>
                                     <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                         }`}>
@@ -331,13 +319,13 @@ export default function Profile() {
                                 <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-blue-400" : "text-blue-600"
                                     }`}>
                                     {activeTab === "uploads"
-                                        ? uploads.reduce((sum, u) => sum + u.downloads, 0).toLocaleString()
-                                        : "1234"
+                                        ? uploads.length
+                                        : "0"
                                     }
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                     }`}>
-                                    Total Downloads
+                                    Total {activeTab === "uploads" ? "Uploads" : "Downloads"}
                                 </div>
                             </div>
                         </div>
@@ -348,7 +336,7 @@ export default function Profile() {
                                 uploads.length > 0 ? (
                                     uploads.map((upload) => (
                                         <ActivityCard
-                                            key={upload.id}
+                                            key={upload._id}
                                             item={upload}
                                             type="upload"
                                             theme={theme}
@@ -432,11 +420,11 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                     {/* Status Badge (only for uploads) */}
                     {type === "upload" && (
                         <div className="mb-3">
-                            <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(item.status)}`}>
-                                {item.status}
+                            <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(item.approvalStatus)}`}>
+                                {item.approvalStatus}
                             </span>
                             <span className={`ml-3 text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                {item.date}
+                                {new Date(item.createdAt).toLocaleDateString()}
                             </span>
                         </div>
                     )}
@@ -448,25 +436,14 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
 
                     <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                         }`}>
-                        {item.subject}
+                        {item.subject?.name || item.subject} - {item.branch} - Sem {item.semester}
                     </p>
                 </div>
 
                 {/* Stats */}
-                {type === "upload" && item.status === "approved" && (
-                    <div className="flex items-center gap-4 text-xs md:text-sm">
-                        <div className="flex items-center gap-1">
-                            <FaDownload className={`text-sm ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
-                            <span className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                {item.downloads.toLocaleString()}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <FaStar className="text-yellow-400 text-sm" />
-                            <span className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                {item.rating}
-                            </span>
-                        </div>
+                {type === "upload" && item.approvalStatus === "Approved" && (
+                    <div className={`font-medium text-sm ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
+                        ✓ Approved
                     </div>
                 )}
             </div>
