@@ -2,20 +2,19 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
-import Profile from './pages/profile';
+import Profile from './pages/Profile';
 import ForgotPassword from './components/ForgotPassword';
 import Download from './pages/Download';
 import SubjectDetail from './pages/SubjectDetail';
 import GuestRoute from './components/GuestRoute';
+import Upload from './pages/Upload';
 
 import { createContext, useState } from 'react';
-import Upload from './pages/Upload';
 
 export const SignUpContext = createContext();
 export const ThemeContext = createContext("dark");
 
 function App() {
-  const [isUploadActive, setIsUploadActive] = useState(false);
   const [isSignUpActive, setIsSignUpActive] = useState(false);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
 
