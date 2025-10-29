@@ -1,21 +1,64 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ThemeContext } from "../App";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { FaUpload, FaCloudUploadAlt } from "react-icons/fa";
+import { FaUpload, FaCloudUploadAlt, FaCheckCircle } from "react-icons/fa";
+import { questionPaperAPI, subjectAPI } from "../lib/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Upload() {
     const { theme } = useContext(ThemeContext);
+    const navigate = useNavigate();
     const [dragActive, setDragActive] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadSuccess, setUploadSuccess] = useState(false);
+    const [error, setError] = useState("");
+    const [subjects, setSubjects] = useState([]);
+    const [filteredSubjects, setFilteredSubjects] = useState([]);
     const [formData, setFormData] = useState({
+        subjectId: "",
         title: "",
         year: "",
         subject: "",
         branch: "",
         semester: "",
+        type: "Previous Year Question Paper",
         description: ""
     });
+
+    // Fetch subjects on mount
+    useEffect(() => {
+        fetchSubjects();
+    }, []);
+
+    // Filter subjects when branch/semester changes
+    useEffect(() => {
+        filterSubjects();
+    }, [formData.branch, formData.semester, subjects]);
+
+    const fetchSubjects = async () => {
+        try {
+            const response = await subjectAPI.getAll();
+            setSubjects(response.data.subjects || []);
+        } catch (err) {
+            console.error("Error fetching subjects:", err);
+        }
+    };
+
+    const filterSubjects = () => {
+        let filtered = subjects;
+        
+        if (formData.branch) {
+            filtered = filtered.filter(s => s.branch === formData.branch);
+        }
+        
+        if (formData.semester) {
+            filtered = filtered.filter(s => s.semester === parseInt(formData.semester));
+        }
+        
+        setFilteredSubjects(filtered);
+    };
 
     const handleDrag = (e) => {
         e.preventDefault();
@@ -45,18 +88,133 @@ export default function Upload() {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        
+        // If subject is selected, auto-populate other fields
+        if (name === "subjectId" && value) {
+            const selectedSubject = subjects.find(s => s._id === value);
+            if (selectedSubject) {
+                setFormData(prev => ({
+                    ...prev,
+                    subjectId: value,
+                    subject: selectedSubject.name,
+                    branch: selectedSubject.branch,
+                    semester: selectedSubject.semester.toString(),
+                    // Auto-generate title based on subject, type, and year
+                    title: prev.year && prev.type 
+                        ? `${selectedSubject.name} ${prev.type === "Previous Year Question Paper" ? "PYQ" : prev.type} ${prev.year}`
+                        : prev.title
+                }));
+                return;
+            }
+        }
+
+        // Update form data
+        setFormData(prev => {
+            const updated = {
+                ...prev,
+                [name]: value
+            };
+
+            // Auto-update title when year or type changes (if subject is selected)
+            if ((name === "year" || name === "type") && updated.subject) {
+                updated.title = `${updated.subject} ${updated.type === "Previous Year Question Paper" ? "PYQ" : updated.type} ${updated.year}`;
+            }
+
+            return updated;
+        });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Add your upload logic here
-        console.log("Form Data:", formData);
-        console.log("File:", selectedFile);
-        alert("Submitting for review...");
+        setError("");
+        setUploading(true);
+
+        try {
+            // Check if user is logged in
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError("Please login to upload question papers");
+                navigate('/login');
+                return;
+            }
+
+            // Validate file
+            if (!selectedFile) {
+                setError("Please select a PDF file to upload");
+                setUploading(false);
+                return;
+            }
+
+            console.log('Selected file info:', {
+                name: selectedFile.name,
+                type: selectedFile.type,
+                size: selectedFile.size,
+                lastModified: selectedFile.lastModified
+            });
+
+            // Validate file type
+            if (selectedFile.type !== 'application/pdf') {
+                setError("Only PDF files are allowed");
+                setUploading(false);
+                return;
+            }
+
+            // Validate file size (10MB)
+            if (selectedFile.size > 10 * 1024 * 1024) {
+                setError("File size should not exceed 10MB");
+                setUploading(false);
+                return;
+            }
+
+            // Create FormData
+            const uploadData = new FormData();
+            uploadData.append('pdf', selectedFile);
+            uploadData.append('title', formData.title);
+            uploadData.append('year', formData.year);
+            uploadData.append('subject', formData.subjectId); // Use subjectId instead of subject name
+            uploadData.append('branch', formData.branch);
+            uploadData.append('semester', formData.semester);
+            uploadData.append('type', formData.type);
+            uploadData.append('description', formData.description);
+
+            console.log('FormData created with fields:', {
+                title: formData.title,
+                year: formData.year,
+                subject: formData.subjectId,
+                branch: formData.branch,
+                semester: formData.semester,
+                type: formData.type,
+                hasFile: uploadData.has('pdf')
+            });
+
+            console.log('Uploading to backend...');
+            // Upload to backend
+            const response = await questionPaperAPI.upload(uploadData);
+            console.log('Upload response:', response.data);
+
+            // Success!
+            setUploadSuccess(true);
+            
+            // Reset form and file
+            setFormData({
+                subjectId: "",
+                title: "",
+                year: "",
+                subject: "",
+                branch: "",
+                semester: "",
+                type: "Previous Year Question Paper",
+                description: ""
+            });
+            setSelectedFile(null);
+
+        } catch (err) {
+            console.error("Upload error:", err);
+            console.error("Error details:", err.response?.data);
+            setError(err.response?.data?.message || "Failed to upload question paper. Please try again.");
+        } finally {
+            setUploading(false);
+        }
     };
 
     return (
@@ -73,6 +231,30 @@ export default function Upload() {
                             Share Your Question Paper With Fellow Students
                         </p>
                     </div>
+
+                    {/* Success Message */}
+                    {uploadSuccess && (
+                        <div className="mb-6 p-4 bg-green-500/10 border border-green-500/50 rounded-lg flex items-center gap-3">
+                            <FaCheckCircle className="text-green-500 text-xl" />
+                            <div>
+                                <p className={`font-semibold ${theme === "dark" ? "text-green-400" : "text-green-700"}`}>
+                                    Upload Successful!
+                                </p>
+                                <p className={`text-sm ${theme === "dark" ? "text-green-300" : "text-green-600"}`}>
+                                    Your question paper is pending admin approval.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Error Message */}
+                    {error && (
+                        <div className="mb-6 p-4 bg-red-500/10 border border-red-500/50 rounded-lg">
+                            <p className={`font-semibold ${theme === "dark" ? "text-red-400" : "text-red-700"}`}>
+                                {error}
+                            </p>
+                        </div>
+                    )}
 
                     {/* Main Form Card */}
                     <div className={`rounded-2xl p-6 md:p-8 border relative overflow-hidden ${theme === "dark"
@@ -167,13 +349,17 @@ export default function Upload() {
                                         name="title"
                                         value={formData.title}
                                         onChange={handleInputChange}
-                                        placeholder="e.g., Mid-Semester Exam 2023"
+                                        placeholder="Auto-generated from subject, type, and year"
                                         required
+                                        readOnly
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
                                             ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                                             }`}
                                     />
+                                    <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                                        This is automatically generated. Select subject, type, and year to populate.
+                                    </p>
                                 </div>
 
                                 {/* Year */}
@@ -228,15 +414,15 @@ export default function Upload() {
                                     </select>
                                 </div>
 
-                                {/* Subject */}
+                                {/* Semester */}
                                 <div>
                                     <label className={`block text-sm font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"
                                         }`}>
-                                        Subject <span className="text-red-500">*</span>
+                                        Semester <span className="text-red-500">*</span>
                                     </label>
                                     <select
-                                        name="subject"
-                                        value={formData.subject}
+                                        name="semester"
+                                        value={formData.semester}
                                         onChange={handleInputChange}
                                         required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
@@ -244,39 +430,69 @@ export default function Upload() {
                                             : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                                             }`}
                                     >
-                                        <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select subject</option>
-                                        <option value="Data Structures" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Data Structures</option>
-                                        <option value="Algorithms" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Algorithms</option>
-                                        <option value="Operating Systems" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Operating Systems</option>
-                                        <option value="DBMS" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>DBMS</option>
-                                        <option value="Computer Networks" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Computer Networks</option>
+                                        <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select semester</option>
+                                        {[1, 2, 3, 4, 5, 6, 7, 8].map(sem => (
+                                            <option key={sem} value={sem} className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>
+                                                Semester {sem}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
 
-                                {/* Semester */}
+                                {/* Subject Dropdown */}
+                                <div className="md:col-span-2">
+                                    <label className={`block text-sm font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"
+                                        }`}>
+                                        Subject <span className="text-red-500">*</span>
+                                    </label>
+                                    <select
+                                        name="subjectId"
+                                        value={formData.subjectId}
+                                        onChange={handleInputChange}
+                                        required
+                                        disabled={!formData.branch || !formData.semester}
+                                        className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10 disabled:opacity-50"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 disabled:opacity-50"
+                                            }`}
+                                    >
+                                        <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>
+                                            {!formData.branch || !formData.semester 
+                                                ? "Select branch and semester first" 
+                                                : filteredSubjects.length === 0 
+                                                    ? "No subjects available for this branch/semester"
+                                                    : "Select subject"}
+                                        </option>
+                                        {filteredSubjects.map(subject => (
+                                            <option key={subject._id} value={subject._id} className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>
+                                                {subject.name} {subject.code ? `(${subject.code})` : ''}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                                        This will auto-fill branch, semester, and generate title
+                                    </p>
+                                </div>
+
+                                {/* Type */}
                                 <div>
                                     <label className={`block text-sm font-semibold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"
                                         }`}>
-                                        Semester
+                                        Type <span className="text-red-500">*</span>
                                     </label>
                                     <select
-                                        name="semester"
-                                        value={formData.semester}
+                                        name="type"
+                                        value={formData.type}
                                         onChange={handleInputChange}
+                                        required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
                                             ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10"
                                             : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
                                             }`}
                                     >
-                                        <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select semester</option>
-                                        <option value="1" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 1</option>
-                                        <option value="2" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 2</option>
-                                        <option value="3" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 3</option>
-                                        <option value="4" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 4</option>
-                                        <option value="5" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 5</option>
-                                        <option value="6" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 6</option>
-                                        <option value="7" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 7</option>
-                                        <option value="8" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Semester 8</option>
+                                        <option value="Previous Year Question Paper" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Previous Year Question Paper</option>
+                                        <option value="Periodic Test" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Periodic Test</option>
+                                        <option value="Question Bank" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Question Bank</option>
                                     </select>
                                 </div>
                             </div>
@@ -304,10 +520,29 @@ export default function Upload() {
                             <div className="pt-4">
                                 <button
                                     type="submit"
-                                    className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm "
+                                    disabled={uploading || uploadSuccess || !selectedFile}
+                                    className={`w-full py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm ${
+                                        uploading || uploadSuccess || !selectedFile
+                                            ? "bg-gray-400 cursor-not-allowed"
+                                            : "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                                    }`}
                                 >
-                                    <FaUpload />
-                                    Submit for Review
+                                    {uploading ? (
+                                        <>
+                                            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                            Uploading...
+                                        </>
+                                    ) : uploadSuccess ? (
+                                        <>
+                                            <FaCheckCircle />
+                                            Uploaded Successfully!
+                                        </>
+                                    ) : (
+                                        <>
+                                            <FaUpload />
+                                            {!selectedFile ? 'Select a PDF file first' : 'Submit for Review'}
+                                        </>
+                                    )}
                                 </button>
                             </div>
                         </form>
