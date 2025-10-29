@@ -4,6 +4,7 @@ import {
   login,
   sendResetCode,
   resetPassword,
+  updateProfile,
 } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
 
@@ -14,6 +15,7 @@ router.post('/signup', signup);
 router.post('/login', login);
 router.post('/forgot-password', sendResetCode);
 router.post('/reset-password', resetPassword);
+router.put('/profile', verifyToken, updateProfile);
 
 
 router.get('/profile', verifyToken, (req, res) => {
