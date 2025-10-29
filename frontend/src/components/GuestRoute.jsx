@@ -1,8 +1,7 @@
-// components/GuestRoute.js
 import { Navigate } from 'react-router-dom';
 
 const GuestRoute = ({ children }) => {
-  const isLoggedIn = localStorage.getItem('token'); // adjust based on your auth logic
+  const isLoggedIn = localStorage.getItem('token'); 
   return isLoggedIn ? <Navigate to="/profile" replace /> : children;
 };
 
