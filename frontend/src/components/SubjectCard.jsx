@@ -3,33 +3,29 @@ import { FiBookOpen } from 'react-icons/fi';
 import { ThemeContext } from '../App';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { subjects } from '../lib/subjects';
 
 export default function SubjectCard({ subject, index }) {
     const { theme } = useContext(ThemeContext);
-    
-    // Get the index of the subject in the subjects array for the dynamic route
-    const subjectIndex = index !== undefined ? index : subjects.findIndex(s => s.subject === subject.subject);
     
     return (
         <div className={`border ${theme === "light" ? "border-gray-400" : "border-gray-700"} rounded-lg shadow-md p-4 flex flex-col gap-2 hover:scale-105 transition-transform`}>
             <div className='flex justify-between items-center'>
                 <div className='flex gap-2 text-white text-sm font-medium'>
                     <span className={`rounded-lg border-2 ${theme === "light" ? "text-blue-800" : "text-blue-200"} border-blue-700 px-2 py-1 bg-blue-600/30`}>{subject.branch}</span>
-                    <span className={`rounded-lg border-2 ${theme === "light" ? "text-gray-800" : "text-gray-200"} border-gray-700 px-2 py-1 bg-gray-100/5`}>{subject.semester}</span>
+                    <span className={`rounded-lg border-2 ${theme === "light" ? "text-gray-800" : "text-gray-200"} border-gray-700 px-2 py-1 bg-gray-100/5`}>Sem {subject.semester}</span>
                 </div>
                 <h1 className={`text-lg font-semibold flex items-center ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>
                     <FaStar className="inline text-yellow-500 mr-1" />
-                    {subject.rating}
+                    {subject.rating || 4.5}
                 </h1>
             </div>
             <div className='flex flex-col gap-2 text-sm'>
-                <h1 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>{subject.subject}</h1>
+                <h1 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>{subject.name}</h1>
                 <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>Credits: <span>{subject.credits}</span></h3>
-                <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>PYQs Available: <span>{subject.pyqs_available}</span></h3>
-                <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>Downloads: <span>{subject.downloads}</span></h3>
+                <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>PYQs Available: <span>{subject.pyqs_available || 0}</span></h3>
+                <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>Downloads: <span>{subject.downloads || 0}</span></h3>
             </div>
-            <Link to={`/subject/${subjectIndex}`}>
+            <Link to={`/subject/${subject._id}`}>
                 <button className='flex gap-2 items-center justify-center w-full rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 font-semibold text-xs md:text-sm hover:shadow-lg transition-all'>
                     <FiBookOpen /> View PYQs
                 </button>

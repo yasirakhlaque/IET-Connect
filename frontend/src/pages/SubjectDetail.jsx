@@ -1,107 +1,113 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ThemeContext } from "../App";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { subjects } from "../lib/subjects";
+import { questionPaperAPI, subjectAPI } from "../lib/api";
 import { FaStar, FaDownload, FaArrowLeft, FaCalendar, FaFileAlt, FaBook, FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
-
-// Sample PYQ data - You can replace this with actual data from API/backend
-const samplePYQs = [
-    {
-        "id": 1,
-        "year": "2023",
-        "type": "Regular",
-        "fileSize": "2.5 MB",
-        "downloads": 234,
-        "uploadDate": "2024-01-15",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2023",
-        "uploader": "Alex Chen",
-        "rating": 4.8,
-        "likes": 156
-    },
-    {
-        "id": 2,
-        "year": "2023",
-        "type": "Regular",
-        "fileSize": "1.8 MB",
-        "downloads": 189,
-        "uploadDate": "2023-09-20",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2023",
-        "uploader": "User 12",
-        "rating": 4.6,
-        "likes": 104
-    },
-    {
-        "id": 3,
-        "year": "2022",
-        "type": "Regular",
-        "fileSize": "2.2 MB",
-        "downloads": 456,
-        "uploadDate": "2023-01-10",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2022",
-        "uploader": "User 13",
-        "rating": 4.9,
-        "likes": 251
-    },
-    {
-        "id": 4,
-        "year": "2022",
-        "type": "Regular",
-        "fileSize": "1.5 MB",
-        "downloads": 321,
-        "uploadDate": "2022-09-15",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2022",
-        "uploader": "User 14",
-        "rating": 4.9,
-        "likes": 177
-    },
-    {
-        "id": 5,
-        "year": "2021",
-        "type": "Regular",
-        "fileSize": "2.0 MB",
-        "downloads": 567,
-        "uploadDate": "2022-01-08",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2021",
-        "uploader": "User 15",
-        "rating": 4.8,
-        "likes": 312
-    },
-    {
-        "id": 6,
-        "year": "2021",
-        "type": "Regular",
-        "fileSize": "1.7 MB",
-        "downloads": 412,
-        "uploadDate": "2021-09-12",
-        "subjectTag": "CSE",
-        "semesterTag": "Sem 3",
-        "title": "Data Structures and Algorithms Exam 2021",
-        "uploader": "User 16",
-        "rating": 4.8,
-        "likes": 227
-    }
-];
 
 export default function SubjectDetail() {
     const { subjectId } = useParams();
     const { theme } = useContext(ThemeContext);
     const navigate = useNavigate();
 
-    // Find the subject by index (you can modify this to use a proper ID field)
-    const subject = subjects[parseInt(subjectId)];
+    const [subject, setSubject] = useState(null);
+    const [questionPapers, setQuestionPapers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+    const [likedPapers, setLikedPapers] = useState({});
+
+    useEffect(() => {
+        fetchSubject();
+        fetchQuestionPapers();
+    }, [subjectId]);
+
+    const fetchSubject = async () => {
+        try {
+            const response = await subjectAPI.getById(subjectId);
+            setSubject(response.data.subject);
+        } catch (err) {
+            console.error("Error fetching subject:", err);
+            setSubject(null);
+        }
+    };
+
+    const fetchQuestionPapers = async () => {
+        try {
+            setLoading(true);
+            const response = await questionPaperAPI.getAll();
+            
+            // Filter papers for this specific subject by ID
+            const subjectPapers = response.data.questionPapers.filter(
+                paper => paper.subject?._id === subjectId || paper.subject === subjectId
+            );
+            
+            setQuestionPapers(subjectPapers);
+            setError("");
+        } catch (err) {
+            console.error("Error fetching question papers:", err);
+            setError("Failed to load question papers. Please try again later.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDownload = async (paperId) => {
+        try {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            const downloadUrl = `${baseUrl}/questionpapers/${paperId}/download`;
+            
+            // Fetch the download URL and filename from backend
+            const response = await fetch(downloadUrl);
+            const data = await response.json();
+            
+            if (data.downloadUrl && data.filename) {
+                // Ensure filename ends with .pdf
+                let filename = data.filename;
+                if (!filename.toLowerCase().endsWith('.pdf')) {
+                    filename = filename + '.pdf';
+                }
+                
+                // Fetch the file as blob to force download
+                const fileResponse = await fetch(data.downloadUrl);
+                const blob = await fileResponse.blob();
+                
+                // Create blob URL and trigger download
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename; // Force .pdf extension
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Clean up blob URL
+                window.URL.revokeObjectURL(blobUrl);
+            } else {
+                throw new Error("Invalid download response");
+            }
+        } catch (err) {
+            console.error("Error downloading:", err);
+            alert("Failed to download file. Please try again.");
+        }
+    };
+
+    const handleLike = (paperId) => {
+        setLikedPapers(prev => ({
+            ...prev,
+            [paperId]: !prev[paperId]
+        }));
+    };
+
+    // Calculate subject stats from actual papers
+    const subjectStats = {
+        totalPapers: questionPapers.length,
+        totalDownloads: questionPapers.reduce((sum, p) => sum + (p.downloads || 0), 0),
+        avgRating: questionPapers.length > 0 
+            ? (questionPapers.reduce((sum, p) => sum + (p.rating || 4.5), 0) / questionPapers.length).toFixed(1)
+            : "4.5"
+    };
 
     if (!subject) {
         return (
@@ -174,14 +180,14 @@ export default function SubjectDetail() {
 
                                 <h1 className={`text-3xl md:text-4xl font-bold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"
                                     }`}>
-                                    {subject.subject}
+                                    {subject.name}
                                 </h1>
 
                                 <div className="flex flex-wrap gap-6 mb-4">
                                     <div className="flex items-center gap-2">
                                         <FaStar className="text-yellow-400" />
                                         <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                            {subject.rating}
+                                            {subjectStats.avgRating}
                                         </span>
                                         <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                             Rating
@@ -201,7 +207,7 @@ export default function SubjectDetail() {
                                     <div className="flex items-center gap-2">
                                         <FaDownload className={theme === "dark" ? "text-green-400" : "text-green-600"} />
                                         <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                            {subject.downloads}
+                                            {subjectStats.totalDownloads}
                                         </span>
                                         <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                             Downloads
@@ -217,7 +223,7 @@ export default function SubjectDetail() {
                                 <IoDocumentText className={`text-5xl mb-2 ${theme === "dark" ? "text-purple-400" : "text-purple-600"
                                     }`} />
                                 <span className={`text-3xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                    {subject.pyqs_available}
+                                    {subjectStats.totalPapers}
                                 </span>
                                 <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                     PYQs Available
@@ -233,11 +239,46 @@ export default function SubjectDetail() {
                         Previous Year Question Papers
                     </h2>
 
-                    <div className="flex flex-col gap-4">
-                        {samplePYQs.map((pyq) => (
-                            <PYQCard key={pyq.id} pyq={pyq} theme={theme} subjectName={subject.subject} subject={subject} />
-                        ))}
-                    </div>
+                    {loading ? (
+                        <div className="text-center py-12">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
+                            <p className={`mt-4 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                Loading question papers...
+                            </p>
+                        </div>
+                    ) : error ? (
+                        <div className="text-center py-12">
+                            <p className={`text-red-500`}>{error}</p>
+                        </div>
+                    ) : questionPapers.length === 0 ? (
+                        <div className={`text-center py-12 rounded-xl ${theme === "dark"
+                            ? "bg-white/[0.03] border border-white/[0.08]"
+                            : "bg-white border border-gray-200"
+                            }`}>
+                            <IoDocumentText className={`text-6xl mx-auto mb-4 ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`} />
+                            <p className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                No question papers available yet.
+                            </p>
+                            <p className={`text-sm mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                                Be the first to upload!
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-4">
+                            {questionPapers.map((paper) => (
+                                <PYQCard 
+                                    key={paper._id} 
+                                    pyq={paper} 
+                                    theme={theme} 
+                                    subjectName={subject.name} 
+                                    subject={subject}
+                                    onDownload={handleDownload}
+                                    onLike={handleLike}
+                                    isLiked={likedPapers[paper._id]}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -246,13 +287,16 @@ export default function SubjectDetail() {
     );
 }
 
-function PYQCard({ pyq, theme, subjectName, subject }) {
-    const handleDownload = () => {
-        // Add your download logic here
-        alert(`Downloading ${subjectName} - ${pyq.year}`);
+function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked }) {
+    const handleDownloadClick = () => {
+        onDownload(pyq._id);
     };
 
-    const userName = pyq.uploader.charAt(0).toUpperCase() + pyq.uploader.charAt(1).toLowerCase();
+    const handleLikeClick = () => {
+        onLike(pyq._id);
+    };
+
+    const userName = pyq.uploadedBy?.name || pyq.uploadedBy?.rollno || "Anonymous";
 
     return (
         <div className={`rounded-xl p-5 border transition-all hover:shadow-xl cursor-pointer relative overflow-hidden ${theme === "dark"
@@ -272,13 +316,13 @@ function PYQCard({ pyq, theme, subjectName, subject }) {
                                 ? "bg-blue-500/20 text-blue-300 border border-blue-500/30"
                                 : "bg-blue-100 text-blue-700 border border-blue-200"
                             }`}>
-                            {subject.branch}
+                            {pyq.branch}
                         </span>
                         <span className={`px-3 py-1 rounded-lg text-xs font-medium ${theme === "dark"
                                 ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
                                 : "bg-purple-100 text-purple-700 border border-purple-200"
                             }`}>
-                            {subject.semester}
+                            Sem {pyq.semester}
                         </span>
                         <span className={`px-3 py-1 rounded-lg text-xs font-medium ${theme === "dark"
                                 ? "bg-orange-500/20 text-orange-300 border border-orange-500/30"
@@ -286,12 +330,18 @@ function PYQCard({ pyq, theme, subjectName, subject }) {
                             }`}>
                             {pyq.year}
                         </span>
+                        <span className={`px-3 py-1 rounded-lg text-xs font-medium ${theme === "dark"
+                                ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                                : "bg-green-100 text-green-700 border border-green-200"
+                            }`}>
+                            {pyq.type}
+                        </span>
                     </div>
 
                     {/* Title */}
                     <h3 className={`text-lg md:text-xl font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"
                         }`}>
-                        {subjectName} Exam {pyq.year}
+                        {pyq.title}
                     </h3>
 
                     {/* Subtitle */}
@@ -307,25 +357,25 @@ function PYQCard({ pyq, theme, subjectName, subject }) {
                                 }`}>
                                 <span className={`text-xs font-medium ${theme === "dark" ? "text-purple-300" : "text-purple-700"
                                     }`}>
-                                    {userName}
+                                    {userName.substring(0, 2).toUpperCase()}
                                 </span>
                             </div>
                             <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
-                                {pyq.uploader}
+                                {userName}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-1">
                             <FaCalendar className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`} />
                             <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
-                                {new Date(pyq.uploadDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
+                                {new Date(pyq.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-1">
                             <FaFileAlt className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`} />
                             <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
-                                {pyq.fileSize}
+                                PDF
                             </span>
                         </div>
                     </div>
@@ -335,47 +385,36 @@ function PYQCard({ pyq, theme, subjectName, subject }) {
                 <div className="flex flex-row md:flex-col items-center gap-4 md:gap-3 text-xs md:text-sm justify-between">
                     {/* Stats */}
                     <div className="flex gap-4 md:gap-6">
-                        <div className="flex items-center gap-1">
-                            <FaStar className="text-yellow-400 text-sm" />
+                        <button 
+                            onClick={handleLikeClick}
+                            className="flex items-center gap-1 hover:scale-110 transition-transform"
+                        >
+                            {isLiked ? (
+                                <FaThumbsUp className="text-purple-500 text-sm" />
+                            ) : (
+                                <FaRegThumbsUp className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`} />
+                            )}
                             <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                {subject.rating}
+                                {(pyq.likes || 0) + (isLiked ? 1 : 0)}
                             </span>
-                        </div>
+                        </button>
 
                         <div className="flex items-center gap-1">
                             <FaDownload className={`text-sm ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
                             <span className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                {pyq.downloads.toLocaleString()}
-                            </span>
-                        </div>
-
-                        <div className="flex items-center gap-1">
-                            <FaThumbsUp className={`text-sm ${theme === "dark" ? "text-green-400" : "text-green-600"}`} />
-                            <span className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                              {pyq.likes}
+                                {(pyq.downloads || 0).toLocaleString()}
                             </span>
                         </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex items-center gap-2">
-                        <button
-                            className={`p-2 rounded-lg transition-all ${theme === "dark"
-                                    ? "bg-white/[0.05] hover:bg-white/[0.1] border border-white/10"
-                                    : "bg-gray-100 hover:bg-gray-200 border border-gray-200"
-                                }`}
-                        >
-                            <FaRegThumbsUp className={`text-sm ${theme === "dark" ? "text-gray-300" : "text-gray-700"}`} />
-                        </button>
-
-                        <button
-                            onClick={handleDownload}
-                            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
-                        >
-                            <FaDownload className="text-sm" />
-                            {window.innerWidth < 640 ? "" : "Download"}
-                        </button>
-                    </div>
+                    <button
+                        onClick={handleDownloadClick}
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                    >
+                        <FaDownload className="text-sm" />
+                        Download
+                    </button>
                 </div>
             </div>
         </div>
