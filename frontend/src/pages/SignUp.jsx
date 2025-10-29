@@ -16,6 +16,7 @@ export default function SignUp({ setIsSignUpActive }) {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const initialState = {
+        name: '',
         rollno: '',
         email: '',
         password: '',
@@ -118,6 +119,21 @@ export default function SignUp({ setIsSignUpActive }) {
             </div>
 
             <form className="flex flex-col gap-4 mt-6" onSubmit={handleSubmit}>
+                <div>
+                    <div className={`flex items-center border rounded-lg px-3 py-2 transition ${theme === "dark"
+                        ? "border-white/20 bg-white/5"
+                        : "border-gray-300 bg-gray-50"
+                        }`}>
+                        <FaUser className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
+                        <input type="text" name="name" placeholder="Full Name"
+                            className={`text-xs md:text-sm outline-none w-full bg-transparent ${theme === "dark"
+                                ? "text-white placeholder-gray-400"
+                                : "text-gray-900 placeholder-gray-500"
+                                }`}
+                            value={state.name} onChange={handleChange} />
+                    </div>
+                </div>
+
                 <div>
                     <div className={`flex items-center border rounded-lg px-3 py-2 transition ${theme === "dark"
                         ? "border-white/20 bg-white/5"
