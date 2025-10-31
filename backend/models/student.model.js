@@ -2,11 +2,11 @@ import mongoose from 'mongoose';
 
 const studentSchema = new mongoose.Schema(
   {
-    // name: {
-    //   type: String,
-    //   required: true,
-    //   trim: true,
-    // },
+    name: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     rollno: {
       type: String,
       required: true,

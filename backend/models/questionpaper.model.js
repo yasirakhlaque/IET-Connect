@@ -8,9 +8,9 @@ const questionPaperSchema = new mongoose.Schema(
       trim: true,
     },
     branch: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Branch",
+      type: String,
       required: true,
+      trim: true,
     },
     semester: {
       type: Number,
@@ -31,6 +31,10 @@ const questionPaperSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    pdfPublicId: {
+      type: String,
+      default: null,
+    },
     uploadedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
@@ -41,10 +45,22 @@ const questionPaperSchema = new mongoose.Schema(
       enum: ["Pending", "Approved", "Rejected"],
       default: "Pending",
     },
+    rejectionReason: {
+      type: String,
+      default: null,
+    },
     type: {
       type: String,
       enum: ["Periodic Test", "Previous Year Question Paper", "Question Bank"],
       required: true,
+    },
+    description: {
+      type: String,
+      default: "",
+    },
+    downloads: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }
