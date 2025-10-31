@@ -1,15 +1,8 @@
 import express from 'express';
-import {
-  signup,
-  login,
-  sendResetCode,
-  resetPassword,
-  updateProfile,
-} from '../controllers/auth.controller.js';
+import { signup, login, sendResetCode, resetPassword, updateProfile, } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
-
 
 router.post('/signup', signup);
 router.post('/login', login);
@@ -19,7 +12,7 @@ router.put('/profile', verifyToken, updateProfile);
 
 
 router.get('/profile', verifyToken, (req, res) => {
-  res.json({ message: 'Profile information', userId: req.userId }); 
+  res.json({ message: 'Profile information', userId: req.userId });
 });
 
 export default router;

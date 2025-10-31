@@ -1,13 +1,5 @@
 import express from 'express';
-import { 
-  uploadQuestionPaper, 
-  getQuestionPapers, 
-  getQuestionPaperById,
-  getMyUploads,
-  downloadQuestionPaper,
-  viewQuestionPaper,
-  upload 
-} from '../controllers/questionpaper.controller.js';
+import { uploadQuestionPaper, getQuestionPapers, getQuestionPaperById, getMyUploads, downloadQuestionPaper, viewQuestionPaper, upload } from '../controllers/questionpaper.controller.js';
 import { verifyToken, optionalAuth } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
