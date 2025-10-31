@@ -5,7 +5,7 @@ import { sendEmail } from '../utils/mailer.js';
 
 export const signup = async (req, res) => {
   try {
-    const { rollno, email, password, confirmPassword } = req.body;
+    const { name, rollno, email, password, confirmPassword } = req.body;
 
     if (password !== confirmPassword)
       return res.status(400).json({ message: 'Passwords do not match' });
@@ -18,6 +18,7 @@ export const signup = async (req, res) => {
 
     const hashed = await bcrypt.hash(password, 10);
     const student = await Student.create({
+      name: name?.trim() || null,
       rollno: rollno.toUpperCase(),
       email: email.toLowerCase(),
       password: hashed,
@@ -93,5 +94,37 @@ export const resetPassword = async (req, res) => {
     res.json({ message: 'Password reset successful' });
   } catch (err) {
     res.status(500).json({ message: 'Reset error', error: err.message });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const studentId = req.user.id; // From auth middleware
+
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Update name if provided
+    if (name !== undefined) {
+      student.name = name.trim() || null;
+    }
+
+    await student.save();
+
+    res.json({
+      message: 'Profile updated successfully',
+      student: {
+        id: student._id,
+        name: student.name,
+        email: student.email,
+        rollno: student.rollno,
+      },
+    });
+  } catch (err) {
+    console.error("UPDATE PROFILE ERROR:", err);
+    res.status(500).json({ message: 'Update error', error: err.message });
   }
 };
