@@ -299,7 +299,7 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
     const userName = pyq.uploadedBy?.name || pyq.uploadedBy?.rollno || "Anonymous";
 
     return (
-        <div className={`rounded-xl p-5 border transition-all hover:shadow-xl cursor-pointer relative overflow-hidden ${theme === "dark"
+        <div className={`rounded-xl p-5 border transition-all hover:shadow-xl relative overflow-hidden ${theme === "dark"
                 ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-purple-500/30"
                 : "bg-white shadow-md border-gray-200 hover:border-purple-300"
             }`}>
@@ -410,7 +410,7 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                     {/* Action Buttons */}
                     <button
                         onClick={handleDownloadClick}
-                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl"
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
                     >
                         <FaDownload className="text-sm" />
                         Download

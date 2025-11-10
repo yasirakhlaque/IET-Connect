@@ -14,6 +14,7 @@ export default function SignUp({ setIsSignUpActive }) {
     const [studentExist, setStudentExist] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSigningUp, setIsSigningUp] = useState(false);
 
     const initialState = {
         name: '',
@@ -82,6 +83,7 @@ export default function SignUp({ setIsSignUpActive }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSigningUp(true);
         try {
             if (validate()) {
                 const response = await axios.post('http://localhost:3000/api/auth/signup', state);
@@ -200,8 +202,8 @@ export default function SignUp({ setIsSignUpActive }) {
                     {passwordMatchError && <div className="text-red-400 text-sm mt-1">Passwords do not match</div>}
                 </div>
 
-                <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg text-xs md:text-sm" type="submit">
-                    Sign Up
+                <button className={`bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg text-xs md:text-sm ${isSigningUp ? 'opacity-50 cursor-not-allowed' : ''}`} type="submit">
+                   {isSigningUp ? 'Signing Up...' : 'Sign Up'}
                 </button>
 
                 {submitted && <p className="text-green-400 text-center text-sm">Account created successfully!</p>}

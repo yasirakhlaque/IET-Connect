@@ -15,6 +15,7 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const initialState = {
     email: '',
@@ -47,7 +48,7 @@ export default function Login() {
     setEmailError(false);
     setPasswordError(false);
     setSuccessMessage('');
-
+    setIsLoggingIn(true);
     try {
       const response = await axios.post('http://localhost:3000/api/auth/login', state);
 
@@ -230,8 +231,8 @@ export default function Login() {
                     <Link to={"/forgotpassword"}>Forgot Password?</Link>
                   </div>
 
-                  <button type="submit" className="text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg">
-                    Login
+                  <button type="submit" className={`text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    {isLoggingIn ? 'Logging In...' : 'Login'}
                   </button>
 
                   <p className={`text-sm text-center ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
