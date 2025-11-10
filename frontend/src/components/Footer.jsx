@@ -16,67 +16,47 @@ export default function Footer() {
         { name: "Community", link: "/community" },
         { name: "Help", link: "/help" },
     ]
-
     return (
-        <footer className="pb-12 pt-30 px-6">
+        <footer className={`mt-auto py-6 px-6 border-t ${theme === "dark"
+            ? "border-white/[0.08]"
+            : "border-gray-200"
+            }`}>
             <div className="max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                    {/* Brand Section */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-4">                            
-                            <span className={`font-bold text-xl ${theme === "dark" ? "text-white" : "text-gray-900"
-                                }`}>
-                                IET Connect
-                            </span>
-                        </div>
-                        <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
-                            }`}>
-                            Your academic companion for previous year question papers
-                        </p>
-                        <p className={`text-xs mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"
-                            }`}>
-                            © 2025 IET Connect. Made with ❤️ for students.
-                        </p>
-                    </div>
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                    {/* Copyright */}
+                    <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                        Made with ❤️ for IET Students.
+                    </p>
 
-                    {/* Quick Links */}
-                    <div className="text-center">
-                        <h3 className={`font-semibold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"
-                            }`}>
-                            Quick Links
-                        </h3>
-                        <ul className="space-y-2">
-                            {option1.map((item, index) => (
-                                <li key={index} className={`text-sm transition-colors cursor-pointer hover:text-purple-400 ${theme === "dark"
-                                    ? "text-white"
-                                    : "text-gray-500"
-                                    }`}>
-                                    <Link to={item.link}>
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Support */}
-                    <div className="text-center">
-                        <h3 className={`font-semibold mb-4 ${theme === "dark" ? "text-white" : "text-gray-900"
-                            }`}>
-                            Support
-                        </h3>
-                        <ul className="space-y-2">
-                            {option2.map((item, index) => (
-                                <li key={index} className={`text-sm transition-colors cursor-pointer hover:text-purple-400 ${theme === "dark"
-                                    ? "text-white"
-                                    : "text-gray-500"
-                                    }`}>
-                                    <Link to={item.link}>
-                                        {item.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                    {/* Links */}
+                    <div className="flex gap-6">
+                        <a
+                            href="#"
+                            className={`text-sm transition-colors ${theme === "dark"
+                                ? "text-gray-400 hover:text-purple-400"
+                                : "text-gray-600 hover:text-purple-600"
+                                }`}
+                        >
+                            Privacy
+                        </a>
+                        <a
+                            href="#"
+                            className={`text-sm transition-colors ${theme === "dark"
+                                ? "text-gray-400 hover:text-purple-400"
+                                : "text-gray-600 hover:text-purple-600"
+                                }`}
+                        >
+                            Terms
+                        </a>
+                        <a
+                            href="#"
+                            className={`text-sm transition-colors ${theme === "dark"
+                                ? "text-gray-400 hover:text-purple-400"
+                                : "text-gray-600 hover:text-purple-600"
+                                }`}
+                        >
+                            Contact
+                        </a>
                     </div>
                 </div>
             </div>

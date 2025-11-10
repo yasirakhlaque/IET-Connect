@@ -5,10 +5,6 @@
   font-family: "Montserrat", sans-serif;
 }
 
-a {
-  all: unset;
-}
-
 ::selection {
   color: rgb(169, 78, 255);
   background-color: #d09dff38;
@@ -24,51 +20,9 @@ a {
   }
 }
 
-/* nav {
-  animation: loading .5s ease-in-out;
-}
-
-nav .logo {
+.load {
   animation: loading 1s ease-in-out;
 }
-
-nav li:nth-child(1) {
-  animation: loading 1s ease-in-out;
-}
-
-nav li:nth-child(2) {
-  animation: loading 1.2s ease-in-out;
-}
-
-nav li:nth-child(3) {
-  animation: loading 1.4s ease-in-out;
-}
-
-nav button:nth-child(1) {
-  animation: loading 1.6s ease-in-out;
-}
-
-nav button:nth-child(2) {
-  animation: loading 1.8s ease-in-out;
-}
-div .image-load {
-  animation: loading 1s ease-in-out;
-}
-
-div .heading-load {
-  animation: loading 1s ease-in-out;
-}
-div .para-load {
-  animation: loading 1.2s ease-in-out;
-}
-div .button-load {
-  animation: loading 1.4s ease-in-out;
-} */
-
-.load{
-   animation: loading 1s ease-in-out ;
-}
-
 
 @keyframes loading {
   0% {
