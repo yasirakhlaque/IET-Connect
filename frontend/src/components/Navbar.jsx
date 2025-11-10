@@ -7,13 +7,14 @@ import { IoDocumentText } from "react-icons/io5";
 
 export default function Navbar({ setIsSignUpActive }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { theme } = useContext(ThemeContext);
 
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
 
   const handleLogout = () => {
+    setIsLoggingOut(true);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/login';
@@ -22,7 +23,6 @@ export default function Navbar({ setIsSignUpActive }) {
   const NavOpt = [
     { name: "Upload", link: "/upload" },
     { name: "Download", link: "/download" },
-    { name: "Profile", link: "/profile" },
   ];
 
   return (
@@ -66,12 +66,14 @@ export default function Navbar({ setIsSignUpActive }) {
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className={`px-5 py-2 rounded-full font-medium transition-all ${theme === "dark"
+                      className={`px-5 py-2 rounded-full font-medium transition-all
+                        ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}
+                        ${theme === "dark"
                         ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
                         : "bg-red-100 text-red-600 hover:bg-red-200"
                         }`}
                     >
-                      Logout
+                      {isLoggingOut ? 'Logging Out...' : 'Logout'}
                     </button>
                   </>
                 ) : (
