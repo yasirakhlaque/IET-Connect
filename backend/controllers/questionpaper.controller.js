@@ -37,16 +37,29 @@ export const uploadQuestionPaper = async (req, res) => {
       bodyFields: Object.keys(req.body)
     });
 
+    // Validate required fields
     if (!title || !year || !subject || !branch || !semester || !type) {
       return res.status(400).json({ 
         message: 'Missing required fields' 
       });
     }
 
+    // Validate file exists
     if (!file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
+    // Validate file type
+    if (file.mimetype !== 'application/pdf') {
+      return res.status(400).json({ message: 'Only PDF files are allowed' });
+    }
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      return res.status(400).json({ message: 'File size must be less than 10MB' });
+    }
+
+    // Validate file buffer
     if (!file.buffer || file.buffer.length === 0) {
       return res.status(400).json({ message: 'File buffer is empty' });
     }

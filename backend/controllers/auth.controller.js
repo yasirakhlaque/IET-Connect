@@ -5,38 +5,56 @@ import { sendEmail } from '../utils/mailer.js';
 
 export const signup = async (req, res) => {
   try {
-    const { name, rollno, email, password, confirmPassword } = req.body;
+    let { name, rollno, email, password, confirmPassword } = req.body;
+
+    // Sanitize inputs
+    name = name?.trim();
+    rollno = rollno?.trim().toUpperCase();
+    email = email?.trim().toLowerCase();
+    
+    // Validate required fields
+    if (!rollno || !email || !password || !confirmPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
 
     if (password !== confirmPassword)
       return res.status(400).json({ message: 'Passwords do not match' });
 
     const existing = await Student.findOne({
-      $or: [{ email: email.toLowerCase() }, { rollno: rollno.toUpperCase() }],
+      $or: [{ email }, { rollno }],
     });
 
     if (existing) return res.status(400).json({ message: 'Student already exists' });
 
     const hashed = await bcrypt.hash(password, 10);
     const student = await Student.create({
-      name: name?.trim() || null,
-      rollno: rollno.toUpperCase(),
-      email: email.toLowerCase(),
+      name: name || null,
+      rollno,
+      email,
       password: hashed,
     });
 
     res.status(201).json({ message: 'Signup successful' });
   } catch (err) {
-    console.error("SIGNUP ERROR:", err);  // <--- Add this too
-    res.status(500).json({ message: 'Error signing up', error: err.message });
+    console.error("SIGNUP ERROR:", err);
+    res.status(500).json({ message: 'An error occurred during signup. Please try again.' });
   }
 };
 
 
 export const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    
+    // Sanitize inputs
+    email = email?.trim().toLowerCase();
+    
+    // Validate required fields
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
 
-    const student = await Student.findOne({ email: email.toLowerCase().trim() });
+    const student = await Student.findOne({ email });
     if (!student) return res.status(400).json({ message: 'Invalid credentials' });
 
     const isMatch = await bcrypt.compare(password, student.password);
@@ -55,14 +73,21 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
-    res.status(500).json({ message: 'Login error', error: err.message });
+    console.error("LOGIN ERROR:", err);
+    res.status(500).json({ message: 'An error occurred during login. Please try again.' });
   }
 };
 
 export const sendResetCode = async (req, res) => {
   try {
-    const { email } = req.body;
-    const student = await Student.findOne({ email: email.toLowerCase().trim() });
+    let { email } = req.body;
+    email = email?.trim().toLowerCase();
+    
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+    
+    const student = await Student.findOne({ email });
     if (!student) return res.status(404).json({ message: 'Email not found' });
 
     const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -73,14 +98,21 @@ export const sendResetCode = async (req, res) => {
     await sendEmail(email, 'Password Reset Code', `Your code is: ${resetCode}`);
     res.json({ message: 'Reset code sent' });
   } catch (err) {
-    res.status(500).json({ message: 'Reset error', error: err.message });
+    console.error("RESET CODE ERROR:", err);
+    res.status(500).json({ message: 'Failed to send reset code. Please try again.' });
   }
 };
 
 export const resetPassword = async (req, res) => {
   try {
-    const { email, resetCode, newPassword } = req.body;
-    const student = await Student.findOne({ email: email.toLowerCase().trim() });
+    let { email, resetCode, newPassword } = req.body;
+    email = email?.trim().toLowerCase();
+    
+    if (!email || !resetCode || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    
+    const student = await Student.findOne({ email });
 
     if (!student || student.resetCode !== resetCode || Date.now() > student.resetCodeExpiry) {
       return res.status(400).json({ message: 'Invalid or expired code' });

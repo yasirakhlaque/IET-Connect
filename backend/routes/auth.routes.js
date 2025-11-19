@@ -1,13 +1,15 @@
 import express from 'express';
 import { signup, login, sendResetCode, resetPassword, updateProfile, } from '../controllers/auth.controller.js';
 import { verifyToken } from '../middlewares/auth.middleware.js';
+import { authLimiter } from '../middlewares/rateLimit.middleware.js';
 
 const router = express.Router();
 
-router.post('/signup', signup);
-router.post('/login', login);
-router.post('/forgot-password', sendResetCode);
-router.post('/reset-password', resetPassword);
+// Apply strict rate limiting to auth endpoints
+router.post('/signup', authLimiter, signup);
+router.post('/login', authLimiter, login);
+router.post('/forgot-password', authLimiter, sendResetCode);
+router.post('/reset-password', authLimiter, resetPassword);
 router.put('/profile', verifyToken, updateProfile);
 
 
