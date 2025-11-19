@@ -15,6 +15,7 @@ export default function SubjectDetail() {
     const [subject, setSubject] = useState(null);
     const [questionPapers, setQuestionPapers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [subjectLoading, setSubjectLoading] = useState(true);
     const [error, setError] = useState("");
     const [likedPapers, setLikedPapers] = useState({});
 
@@ -25,11 +26,14 @@ export default function SubjectDetail() {
 
     const fetchSubject = async () => {
         try {
+            setSubjectLoading(true);
             const response = await subjectAPI.getById(subjectId);
             setSubject(response.data.subject);
         } catch (err) {
             console.error("Error fetching subject:", err);
             setSubject(null);
+        } finally {
+            setSubjectLoading(false);
         }
     };
 
@@ -109,19 +113,43 @@ export default function SubjectDetail() {
             : "4.5"
     };
 
-    if (!subject) {
+    // Show loading state while subject is being fetched
+    if (subjectLoading) {
         return (
-            <div className={`${theme === "dark"
+            <div className={`min-h-screen ${theme === "dark"
                 ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
                 : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
                 }`}>
                 <Navbar />
-                <div className="flex items-center justify-center min-h-[60vh] flex-col gap-4">
+                <div className="flex items-center justify-center min-h-screen flex-col gap-4">
+                    <div className="relative">
+                        <div className={`w-16 h-16 border-4 border-t-transparent rounded-full animate-spin ${
+                            theme === "dark" ? "border-purple-500" : "border-purple-600"
+                        }`}></div>
+                    </div>
+                    <h2 className={`text-xl font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
+                        Loading subject details...
+                    </h2>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
+    // Show not found only after loading is complete and subject is null
+    if (!subject) {
+        return (
+            <div className={`min-h-screen ${theme === "dark"
+                ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
+                : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+                }`}>
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen flex-col gap-4">
                     <h1 className={`text-3xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                         Subject Not Found
                     </h1>
                     <Link to="/download">
-                        <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold">
+                        <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
                             Back to Subjects
                         </button>
                     </Link>
