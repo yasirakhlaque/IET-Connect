@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 export default function SubjectCard({ subject, index }) {
     const { theme } = useContext(ThemeContext);
-    
+
     return (
         <div className={`border ${theme === "light" ? "border-gray-400" : "border-gray-700"} rounded-lg shadow-md p-4 flex flex-col gap-2 hover:scale-105 transition-transform`}>
             <div className='flex justify-between items-center'>
@@ -14,10 +14,6 @@ export default function SubjectCard({ subject, index }) {
                     <span className={`rounded-lg border-2 ${theme === "light" ? "text-blue-800" : "text-blue-200"} border-blue-700 px-2 py-1 bg-blue-600/30`}>{subject.branch}</span>
                     <span className={`rounded-lg border-2 ${theme === "light" ? "text-gray-800" : "text-gray-200"} border-gray-700 px-2 py-1 bg-gray-100/5`}>Sem {subject.semester}</span>
                 </div>
-                <h1 className={`text-lg font-semibold flex items-center ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>
-                    <FaStar className="inline text-yellow-500 mr-1" />
-                    {subject.rating || 4.5}
-                </h1>
             </div>
             <div className='flex flex-col gap-2 text-sm'>
                 <h1 className={`text-lg font-semibold ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>{subject.name}</h1>

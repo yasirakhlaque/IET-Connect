@@ -183,17 +183,7 @@ export default function SubjectDetail() {
                                     {subject.name}
                                 </h1>
 
-                                <div className="flex flex-wrap gap-6 mb-4">
-                                    <div className="flex items-center gap-2">
-                                        <FaStar className="text-yellow-400" />
-                                        <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                            {subjectStats.avgRating}
-                                        </span>
-                                        <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                            Rating
-                                        </span>
-                                    </div>
-
+                                <div className="flex flex-wrap gap-6 mb-4">                 
                                     <div className="flex items-center gap-2">
                                         <FaBook className={theme === "dark" ? "text-purple-400" : "text-purple-600"} />
                                         <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
