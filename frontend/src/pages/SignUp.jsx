@@ -87,7 +87,8 @@ export default function SignUp({ setIsSignUpActive }) {
         setStudentExist(false);
         try {
             if (validate()) {
-                const response = await axios.post('http://localhost:3000/api/auth/signup', state);
+                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+                const response = await axios.post(`${API_URL}/auth/signup`, state);
                 console.log('Signup successful:', response.data);
                 console.log("Submitted:", state);
                 dispatch({ type: "RESET" });

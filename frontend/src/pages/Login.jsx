@@ -50,7 +50,8 @@ export default function Login() {
     setSuccessMessage('');
     setIsLoggingIn(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', state);
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+      const response = await axios.post(`${API_URL}/auth/login`, state);
 
       if (response.data.token) {
         setSuccessMessage('🎉 Congratulations! Logged in successfully.');
