@@ -82,7 +82,25 @@ export default function Upload() {
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0]);
+            const file = e.target.files[0];
+            
+            // Validate file type
+            if (file.type !== 'application/pdf') {
+                setError("Only PDF files are allowed");
+                e.target.value = null; // Clear the input
+                return;
+            }
+            
+            // Validate file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                setError("File size must be less than 10MB");
+                e.target.value = null; // Clear the input
+                return;
+            }
+            
+            // Clear any previous errors
+            setError("");
+            setSelectedFile(file);
         }
     };
 

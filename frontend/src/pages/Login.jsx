@@ -67,6 +67,8 @@ export default function Login() {
       } else {
         console.error(error.message);
       }
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 

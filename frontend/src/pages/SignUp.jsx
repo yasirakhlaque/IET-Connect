@@ -84,6 +84,7 @@ export default function SignUp({ setIsSignUpActive }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSigningUp(true);
+        setStudentExist(false);
         try {
             if (validate()) {
                 const response = await axios.post('http://localhost:3000/api/auth/signup', state);
@@ -94,10 +95,14 @@ export default function SignUp({ setIsSignUpActive }) {
                 setTimeout(() => {
                     setIsSignUpActive(false);
                 }, 3000);
+            } else {
+                setIsSigningUp(false);
             }
         } catch (error) {
             setStudentExist(true);
             console.error('Signup failed:', error.response?.data || error.message);
+        } finally {
+            setIsSigningUp(false);
         }
     };
 
