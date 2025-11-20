@@ -34,14 +34,14 @@ export default function LandingPage() {
       const approvedPapers = papersResponse.data.questionPapers.filter(p => p.approvalStatus === 'Approved');
       
       // Fetch students count
-      const studentsResponse = await axios.get(`${API_URL}/auth/stats`).catch(() => ({ data: { count: 0 } }));
+      const studentsResponse = await axios.get(`${API_URL}/auth/total-users`).catch(() => ({ data: { totalUsers: 0 } }));
       
       // Calculate total downloads from papers
       const totalDownloads = approvedPapers.reduce((sum, paper) => sum + (paper.downloads || 0), 0);
 
       setStats({
         totalPapers: approvedPapers.length,
-        totalStudents: studentsResponse.data?.count || 0,
+        totalStudents: studentsResponse.data?.totalUsers || 0,
         totalDownloads: totalDownloads
       });
     } catch (error) {

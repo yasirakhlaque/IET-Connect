@@ -11,7 +11,7 @@ export const signup = async (req, res) => {
     name = name?.trim();
     rollno = rollno?.trim().toUpperCase();
     email = email?.trim().toLowerCase();
-    
+
     // Validate required fields
     if (!rollno || !email || !password || !confirmPassword) {
       return res.status(400).json({ message: 'All fields are required' });
@@ -45,10 +45,10 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     let { email, password } = req.body;
-    
+
     // Sanitize inputs
     email = email?.trim().toLowerCase();
-    
+
     // Validate required fields
     if (!email || !password) {
       return res.status(400).json({ message: 'Email and password are required' });
@@ -82,11 +82,11 @@ export const sendResetCode = async (req, res) => {
   try {
     let { email } = req.body;
     email = email?.trim().toLowerCase();
-    
+
     if (!email) {
       return res.status(400).json({ message: 'Email is required' });
     }
-    
+
     const student = await Student.findOne({ email });
     if (!student) return res.status(404).json({ message: 'Email not found' });
 
@@ -107,11 +107,11 @@ export const resetPassword = async (req, res) => {
   try {
     let { email, resetCode, newPassword } = req.body;
     email = email?.trim().toLowerCase();
-    
+
     if (!email || !resetCode || !newPassword) {
       return res.status(400).json({ message: 'All fields are required' });
     }
-    
+
     const student = await Student.findOne({ email });
 
     if (!student || student.resetCode !== resetCode || Date.now() > student.resetCodeExpiry) {
@@ -160,3 +160,14 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Update error', error: err.message });
   }
 };
+
+
+export const totalUsers = async (req, res) => {
+  try {
+    const usersCount = await Student.countDocuments();
+    res.json({ totalUsers: usersCount });
+  } catch (err) {
+    console.error("TOTAL USERS ERROR:", err);
+    res.status(500).json({ message: 'Error fetching total users', error: err.message });
+  }
+}
