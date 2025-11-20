@@ -1,21 +1,10 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { ThemeContext } from "../App";
-import { IoDocumentText } from "react-icons/io5";
 
 export default function Footer() {
     const { theme } = useContext(ThemeContext);
 
-    const option1 = [
-        { name: "Home", link: "/" },
-        { name: "Download", link: "/download" },
-        { name: "Upload", link: "/download" },
-    ]
-    const option2 = [
-        { name: "FAQs", link: "/faq" },
-        { name: "Community", link: "/community" },
-        { name: "Help", link: "/help" },
-    ]
     return (
         <footer className={`mt-auto py-6 px-6 border-t ${theme === "dark"
             ? "border-white/[0.08]"
@@ -30,26 +19,26 @@ export default function Footer() {
 
                     {/* Links */}
                     <div className="flex gap-6">
-                        <a
-                            href="#"
+                        <Link
+                            to="/"
                             className={`text-sm transition-colors ${theme === "dark"
                                 ? "text-gray-400 hover:text-purple-400"
                                 : "text-gray-600 hover:text-purple-600"
                                 }`}
                         >
-                            Privacy
-                        </a>
-                        <a
-                            href="#"
+                            Home
+                        </Link>
+                        <Link
+                            to="/download"
                             className={`text-sm transition-colors ${theme === "dark"
                                 ? "text-gray-400 hover:text-purple-400"
                                 : "text-gray-600 hover:text-purple-600"
                                 }`}
                         >
-                            Terms
-                        </a>
+                            Browse
+                        </Link>
                         <a
-                            href="#"
+                            href="mailto:support@ietconnect.edu"
                             className={`text-sm transition-colors ${theme === "dark"
                                 ? "text-gray-400 hover:text-purple-400"
                                 : "text-gray-600 hover:text-purple-600"
