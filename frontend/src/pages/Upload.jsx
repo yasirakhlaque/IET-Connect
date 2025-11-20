@@ -163,13 +163,6 @@ export default function Upload() {
                 return;
             }
 
-            console.log('Selected file info:', {
-                name: selectedFile.name,
-                type: selectedFile.type,
-                size: selectedFile.size,
-                lastModified: selectedFile.lastModified
-            });
-
             // Validate file type
             if (selectedFile.type !== 'application/pdf') {
                 setError("Only PDF files are allowed");
@@ -195,20 +188,8 @@ export default function Upload() {
             uploadData.append('type', formData.type);
             uploadData.append('description', formData.description);
 
-            console.log('FormData created with fields:', {
-                title: formData.title,
-                year: formData.year,
-                subject: formData.subjectId,
-                branch: formData.branch,
-                semester: formData.semester,
-                type: formData.type,
-                hasFile: uploadData.has('pdf')
-            });
-
-            console.log('Uploading to backend...');
             // Upload to backend
             const response = await questionPaperAPI.upload(uploadData);
-            console.log('Upload response:', response.data);
 
             // Success!
             setUploadSuccess(true);
