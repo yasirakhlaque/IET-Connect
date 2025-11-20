@@ -8,6 +8,7 @@ import Download from './pages/Download';
 import SubjectDetail from './pages/SubjectDetail';
 import GuestRoute from './components/GuestRoute';
 import Upload from './pages/Upload';
+import NotFound from './pages/NotFound';
 
 import { createContext, useState } from 'react';
 
@@ -38,6 +39,8 @@ function App() {
             <Route path='/download' element={<Download />} />
             <Route path='/subject/:subjectId' element={<SubjectDetail />} />
             <Route path='/upload' element={<Upload />} />
+            {/* 404 Catch-all route - must be last */}
+            <Route path='*' element={<NotFound />} />
           </Routes>
         </Router>
       </ThemeContext.Provider>
