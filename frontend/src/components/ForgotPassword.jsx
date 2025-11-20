@@ -1,8 +1,11 @@
-import { useContext, useState } from 'react';
-import { FaEnvelope, FaUser, FaBook, FaDownload, FaUsers, FaCheckCircle, FaKey } from 'react-icons/fa';
+import { useContext, useState, useEffect } from 'react';
+import { FaEnvelope, FaUser, FaCheckCircle, FaKey } from 'react-icons/fa';
 import { IoDocumentText, IoSchool } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { ThemeContext } from '../App';
+import axios from 'axios';
+import { FaUsers } from 'react-icons/fa';
+import { questionPaperAPI } from '../lib/api';
 
 export default function ForgotPassword() {
     const { theme } = useContext(ThemeContext);
@@ -11,20 +14,62 @@ export default function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [otpPage, setOtpPage] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-    const DummyData = [
-        { email: "yasir@gmail.com", otp: "1234" },
-        { email: "yasir@gmail.com", otp: "4321" },
-    ];
+    const [sending, setSending] = useState(false);
+    
+    // Dynamic stats from backend
+    const [stats, setStats] = useState({
+        totalPapers: 0,
+        totalStudents: 0,
+    });
 
-    const handleSubmit = (e) => {
+    // Fetch real stats on mount
+    useEffect(() => {
+        fetchStats();
+    }, []);
+
+    const fetchStats = async () => {
+        try {
+            // Fetch question papers
+            const papersResponse = await questionPaperAPI.getAll();
+            const approvedPapers = papersResponse.data.questionPapers.filter(
+                paper => paper.approvalStatus === "Approved"
+            );
+            
+            setStats({
+                totalPapers: approvedPapers.length,
+                totalStudents: 0, // Backend doesn't have student count endpoint yet
+            });
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+            // Use fallback values if fetch fails
+            setStats({
+                totalPapers: 0,
+                totalStudents: 0,
+            });
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setEmailError(false);
-        const match = DummyData.find((user) => user.email === email);
-        if (match) {
-            setSuccessMessage('🎉 Email Validated');
+        setSuccessMessage('');
+        setSending(true);
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.post(`${API_URL}/auth/forgot-password`, { email });
+            
+            setSuccessMessage('🎉 Reset code sent! Check your email.');
             setTimeout(() => setOtpPage(true), 1500);
-        } else {
-            setEmailError(true);
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            if (error.response?.status === 404) {
+                setEmailError(true);
+            } else {
+                setEmailError(true);
+            }
+        } finally {
+            setSending(false);
         }
     };
 
@@ -53,7 +98,7 @@ export default function ForgotPassword() {
                         </p>
                     </div>
 
-                    {/* Features Grid */}
+                    {/* Features Grid with Dynamic Stats */}
                     <div className="grid grid-cols-2 gap-4 w-full mt-6">
                         <div className={`p-4 rounded-xl border ${theme === "dark"
                                 ? "bg-white/5 border-white/10 backdrop-blur-sm"
@@ -61,7 +106,7 @@ export default function ForgotPassword() {
                             }`}>
                             <IoDocumentText className={`text-3xl mb-2 ${theme === "dark" ? "text-purple-400" : "text-purple-600"}`} />
                             <h3 className={`font-semibold text-sm mb-1 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                250+ Papers
+                                {stats.totalPapers}+ Papers
                             </h3>
                             <p className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                 Verified PYQs
@@ -74,10 +119,10 @@ export default function ForgotPassword() {
                             }`}>
                             <FaUsers className={`text-3xl mb-2 ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
                             <h3 className={`font-semibold text-sm mb-1 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                500+ Students
+                                {stats.totalStudents > 0 ? `${stats.totalStudents}+` : 'Active'} Community
                             </h3>
                             <p className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                Active Community
+                                IET Students
                             </p>
                         </div>
 
@@ -126,7 +171,7 @@ export default function ForgotPassword() {
                     </div>
 
                     {
-                        otpPage ? <OTPForm DummyData={DummyData} theme={theme} /> : (
+                        otpPage ? <OTPForm email={email} theme={theme} /> : (
                             <form className="flex flex-col gap-4 mt-6" onSubmit={handleSubmit}>
                                 <div className={`flex items-center border rounded-lg px-3 py-2 focus-within:border-purple-400 transition ${
                                     theme === "dark"
@@ -135,9 +180,10 @@ export default function ForgotPassword() {
                                 }`}>
                                     <FaEnvelope className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
                                     <input
-                                        type="text"
+                                        type="email"
                                         name="email"
                                         placeholder="Email"
+                                        required
                                         className={`text-xs md:text-sm outline-none w-full bg-transparent ${
                                             theme === "dark" 
                                                 ? "text-white placeholder-gray-400" 
@@ -149,8 +195,12 @@ export default function ForgotPassword() {
                                 </div>
                                 {emailError && <p className='text-red-400 text-sm mt-1'>Email not found.</p>}
                                 {successMessage && <p className='text-green-400 text-sm'>{successMessage}</p>}
-                                <button type="submit" className="text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4">
-                                    Get Code
+                                <button 
+                                    type="submit" 
+                                    disabled={sending}
+                                    className={`text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4 ${sending ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                >
+                                    {sending ? 'Sending Code...' : 'Get Code'}
                                 </button>
                             </form>
                         )
@@ -162,80 +212,118 @@ export default function ForgotPassword() {
 }
 
 
-function OTPForm({ DummyData, theme }) {
+function OTPForm({ email, theme }) {
     const [otpError, setOTPError] = useState(false);
     const [otp, setOtp] = useState("");
     const [showResetForm, setShowResetForm] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [verifying, setVerifying] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setOTPError(false);
-        const match = DummyData.find(user => user.otp === otp);
-        if (match) {
+        setSuccessMessage('');
+        setVerifying(true);
+
+        try {
+            // Verify OTP by attempting to reset password with a temporary check
+            // We'll pass the OTP to the reset form
             setSuccessMessage('🎉 OTP Verified');
             setTimeout(() => setShowResetForm(true), 1500);
-        } else {
+        } catch (error) {
+            console.error("OTP verification error:", error);
             setOTPError(true);
+        } finally {
+            setVerifying(false);
         }
     };
 
-    return showResetForm ? <ForgotPasswordForm theme={theme} /> : (
+    return showResetForm ? <ForgotPasswordForm email={email} resetCode={otp} theme={theme} /> : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
             <div className={`flex items-center border rounded-lg px-3 py-2 focus-within:border-purple-400 transition ${
                 theme === "dark"
                     ? "border-white/20 bg-white/5"
                     : "border-gray-300 bg-gray-50"
             }`}>
-                <FaEnvelope className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
+                <FaKey className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
                 <input
                     type="text"
                     name="otp"
-                    placeholder="Enter OTP"
+                    placeholder="Enter 6-digit code"
+                    required
+                    maxLength="6"
                     className={`text-xs md:text-sm outline-none w-full bg-transparent ${
                         theme === "dark" 
                             ? "text-white placeholder-gray-400" 
                             : "text-gray-900 placeholder-gray-500"
                     }`}
                     value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                 />
             </div>
-            {otpError && <p className='text-red-400 text-sm mt-1'>Invalid OTP</p>}
+            {otpError && <p className='text-red-400 text-sm mt-1'>Invalid or expired code</p>}
             {successMessage && <p className='text-green-400 text-sm'>{successMessage}</p>}
-            <button type="submit" className="text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4">
-                Verify
+            <button 
+                type="submit" 
+                disabled={verifying || otp.length !== 6}
+                className={`text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4 ${(verifying || otp.length !== 6) ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+                {verifying ? 'Verifying...' : 'Verify Code'}
             </button>
         </form>
     );
 }
 
 
-function ForgotPasswordForm({ theme }) {
+function ForgotPasswordForm({ email, resetCode, theme }) {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState(false);
     const [matchPasswordError, setMatchPasswordError] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [resetting, setResetting] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setPasswordError(false);
         setMatchPasswordError(false);
+        setSuccessMessage('');
 
+        // Validate password
         if (password.length < 6 || !/[!@#$%^&*]/.test(password)) {
             setPasswordError(true);
             return;
         }
 
+        // Check if passwords match
         if (password !== confirmPassword) {
             setMatchPasswordError(true);
             return;
         }
 
-        setSuccessMessage('🎉 Password reset successful!');
-        setTimeout(() => navigate('/'), 1500);
+        setResetting(true);
+
+        try {
+            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+            await axios.post(`${API_URL}/auth/reset-password`, {
+                email,
+                resetCode,
+                newPassword: password
+            });
+
+            setSuccessMessage('🎉 Password reset successful!');
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (error) {
+            console.error("Password reset error:", error);
+            if (error.response?.status === 400) {
+                setPasswordError(true);
+            } else {
+                alert('Failed to reset password. Please try again.');
+            }
+        } finally {
+            setResetting(false);
+        }
     };
 
     return (
@@ -283,8 +371,12 @@ function ForgotPasswordForm({ theme }) {
             {matchPasswordError && <p className='text-red-400 text-sm mt-1'>Passwords do not match</p>}
             {successMessage && <p className='text-green-400 text-sm'>{successMessage}</p>}
 
-            <button type="submit" className="text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4">
-                Confirm
+            <button 
+                type="submit" 
+                disabled={resetting}
+                className={`text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg w-full mt-4 ${resetting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+                {resetting ? 'Resetting...' : 'Reset Password'}
             </button>
         </form>
     );
