@@ -1,8 +1,9 @@
-import { useState, useReducer, useContext } from 'react';
+import { useState, useReducer, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { FaEnvelope, FaEye, FaKey, FaUser } from "react-icons/fa";
 import { ThemeContext } from '../App';
 import { IoMdEyeOff } from 'react-icons/io';
+import SignupGuidelines from '../components/SignupGuidelines';
 
 export default function SignUp({ setIsSignUpActive }) {
     const { theme } = useContext(ThemeContext);
@@ -15,6 +16,7 @@ export default function SignUp({ setIsSignUpActive }) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSigningUp, setIsSigningUp] = useState(false);
+    const [showGuidelines, setShowGuidelines] = useState(false);
 
     const initialState = {
         name: '',
@@ -36,6 +38,11 @@ export default function SignUp({ setIsSignUpActive }) {
     };
 
     const [state, dispatch] = useReducer(reducer, initialState);
+
+    // Show guidelines popup when component mounts
+    useEffect(() => {
+        setShowGuidelines(true);
+    }, []);
 
     const handleChange = (e) => {
         dispatch({
@@ -220,6 +227,12 @@ export default function SignUp({ setIsSignUpActive }) {
                         }`} onClick={() => setIsSignUpActive(false)}>Login</span>
                 </p>
             </form>
+
+            {/* Guidelines Popup */}
+            <SignupGuidelines 
+                isOpen={showGuidelines} 
+                onClose={() => setShowGuidelines(false)} 
+            />
         </div>
     );
 }
