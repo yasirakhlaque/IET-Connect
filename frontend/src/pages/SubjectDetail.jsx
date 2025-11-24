@@ -117,14 +117,14 @@ export default function SubjectDetail() {
     if (subjectLoading) {
         return (
             <div className={`min-h-screen ${theme === "dark"
-                ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+                ? "bg-[#0B1220]"
+                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
                 }`}>
                 <Navbar />
                 <div className="flex items-center justify-center min-h-screen flex-col gap-4">
                     <div className="relative">
                         <div className={`w-16 h-16 border-4 border-t-transparent rounded-full animate-spin ${
-                            theme === "dark" ? "border-purple-500" : "border-purple-600"
+                            theme === "dark" ? "border-[#0FB8AD]" : "border-[#0FB8AD]-600"
                         }`}></div>
                     </div>
                     <h2 className={`text-xl font-semibold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
@@ -140,8 +140,8 @@ export default function SubjectDetail() {
     if (!subject) {
         return (
             <div className={`min-h-screen ${theme === "dark"
-                ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+                ? "bg-[#0B1220]"
+                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
                 }`}>
                 <Navbar />
                 <div className="flex items-center justify-center min-h-screen flex-col gap-4">
@@ -149,7 +149,7 @@ export default function SubjectDetail() {
                         Subject Not Found
                     </h1>
                     <Link to="/download">
-                        <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
+                        <button className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all">
                             Back to Subjects
                         </button>
                     </Link>
@@ -161,8 +161,8 @@ export default function SubjectDetail() {
 
     return (
         <div className={`${theme === "dark"
-            ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+            ? "bg-[#0B1220]"
+            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
             }`}>
             <Navbar />
 
@@ -171,8 +171,8 @@ export default function SubjectDetail() {
                 <button
                     onClick={() => navigate(-1)}
                     className={`flex items-center gap-2 mb-6 px-4 py-2 rounded-lg transition-all ${theme === "dark"
-                        ? "text-purple-300 hover:bg-white/5"
-                        : "text-purple-700 hover:bg-purple-50"
+                        ? "text-[#0FB8AD] hover:bg-white/5"
+                        : "text-teal-700 hover:bg-teal-50"
                         }`}
                 >
                     <FaArrowLeft />
@@ -185,7 +185,7 @@ export default function SubjectDetail() {
                     : "bg-white shadow-lg border-gray-200"
                     }`}>
                     {theme === "dark" && (
-                        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.05] to-transparent pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#0FB8AD]/[0.05] to-transparent pointer-events-none" />
                     )}
 
                     <div className="relative z-10">
@@ -199,8 +199,8 @@ export default function SubjectDetail() {
                                         {subject.branch}
                                     </span>
                                     <span className={`px-3 py-1 rounded-lg text-sm font-medium ${theme === "dark"
-                                        ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
-                                        : "bg-purple-100 text-purple-700 border border-purple-200"
+                                        ? "bg-[#0FB8AD]/20 text-[#0FB8AD] border border-[#0FB8AD]/30"
+                                        : "bg-teal-100 text-teal-700 border border-[#0FB8AD]-200"
                                         }`}>
                                         {subject.semester}
                                     </span>
@@ -213,11 +213,11 @@ export default function SubjectDetail() {
 
                                 <div className="flex flex-wrap gap-6 mb-4">                 
                                     <div className="flex items-center gap-2">
-                                        <FaBook className={theme === "dark" ? "text-purple-400" : "text-purple-600"} />
+                                        <FaBook className={theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"} />
                                         <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                                             {subject.credits}
                                         </span>
-                                        <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                        <span className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                                             Credits
                                         </span>
                                     </div>
@@ -227,7 +227,7 @@ export default function SubjectDetail() {
                                         <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                                             {subjectStats.totalDownloads}
                                         </span>
-                                        <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                        <span className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                                             Downloads
                                         </span>
                                     </div>
@@ -238,12 +238,12 @@ export default function SubjectDetail() {
                                 ? "bg-white/[0.05]"
                                 : "bg-gray-50"
                                 }`}>
-                                <IoDocumentText className={`text-5xl mb-2 ${theme === "dark" ? "text-purple-400" : "text-purple-600"
+                                <IoDocumentText className={`text-5xl mb-2 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"
                                     }`} />
                                 <span className={`text-3xl font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                                     {subjectStats.totalPapers}
                                 </span>
-                                <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                <span className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                                     PYQs Available
                                 </span>
                             </div>
@@ -259,8 +259,8 @@ export default function SubjectDetail() {
 
                     {loading ? (
                         <div className="text-center py-12">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto"></div>
-                            <p className={`mt-4 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0FB8AD] mx-auto"></div>
+                            <p className={`mt-4 ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                                 Loading question papers...
                             </p>
                         </div>
@@ -273,8 +273,8 @@ export default function SubjectDetail() {
                             ? "bg-white/[0.03] border border-white/[0.08]"
                             : "bg-white border border-gray-200"
                             }`}>
-                            <IoDocumentText className={`text-6xl mx-auto mb-4 ${theme === "dark" ? "text-gray-600" : "text-gray-400"}`} />
-                            <p className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                            <IoDocumentText className={`text-6xl mx-auto mb-4 ${theme === "dark" ? "text-gray-600" : "text-[#9AA8B2]"}`} />
+                            <p className={`text-lg ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                                 No question papers available yet.
                             </p>
                             <p className={`text-sm mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
@@ -318,8 +318,8 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
 
     return (
         <div className={`rounded-xl p-5 border transition-all hover:shadow-xl relative overflow-hidden ${theme === "dark"
-                ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-purple-500/30"
-                : "bg-white shadow-md border-gray-200 hover:border-purple-300"
+                ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-[#0FB8AD]/30"
+                : "bg-white shadow-md border-gray-200 hover:border-[#0FB8AD]-300"
             }`}>
             {theme === "dark" && (
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
@@ -337,8 +337,8 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                             {pyq.branch}
                         </span>
                         <span className={`px-3 py-1 rounded-lg text-xs font-medium ${theme === "dark"
-                                ? "bg-purple-500/20 text-purple-300 border border-purple-500/30"
-                                : "bg-purple-100 text-purple-700 border border-purple-200"
+                                ? "bg-[#0FB8AD]/20 text-[#0FB8AD] border border-[#0FB8AD]/30"
+                                : "bg-teal-100 text-teal-700 border border-[#0FB8AD]-200"
                             }`}>
                             Sem {pyq.semester}
                         </span>
@@ -363,7 +363,7 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                     </h3>
 
                     {/* Subtitle */}
-                    <p className={`text-sm mb-3 ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                    <p className={`text-sm mb-3 ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"
                         }`}>
                         {subjectName}
                     </p>
@@ -371,28 +371,28 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                     {/* Metadata Row */}
                     <div className="flex flex-wrap items-center gap-4 text-sm">
                         <div className="flex items-center gap-2">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${theme === "dark" ? "bg-purple-500/20" : "bg-purple-100"
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center ${theme === "dark" ? "bg-[#0FB8AD]/20" : "bg-teal-100"
                                 }`}>
-                                <span className={`text-xs font-medium ${theme === "dark" ? "text-purple-300" : "text-purple-700"
+                                <span className={`text-xs font-medium ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-700"
                                     }`}>
                                     {userName.substring(0, 2).toUpperCase()}
                                 </span>
                             </div>
-                            <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
+                            <span className={theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}>
                                 {userName}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-1">
-                            <FaCalendar className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`} />
-                            <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
+                            <FaCalendar className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-[#9AA8B2]"}`} />
+                            <span className={theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}>
                                 {new Date(pyq.createdAt).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' })}
                             </span>
                         </div>
 
                         <div className="flex items-center gap-1">
-                            <FaFileAlt className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-gray-400"}`} />
-                            <span className={theme === "dark" ? "text-gray-400" : "text-gray-600"}>
+                            <FaFileAlt className={`text-xs ${theme === "dark" ? "text-gray-500" : "text-[#9AA8B2]"}`} />
+                            <span className={theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}>
                                 PDF
                             </span>
                         </div>
@@ -408,9 +408,9 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                             className="flex items-center gap-1 hover:scale-110 transition-transform"
                         >
                             {isLiked ? (
-                                <FaThumbsUp className="text-purple-500 text-sm" />
+                                <FaThumbsUp className="text-teal-500 text-sm" />
                             ) : (
-                                <FaRegThumbsUp className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`} />
+                                <FaRegThumbsUp className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`} />
                             )}
                             <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                                 {(pyq.likes || 0) + (isLiked ? 1 : 0)}
@@ -428,7 +428,7 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                     {/* Action Buttons */}
                     <button
                         onClick={handleDownloadClick}
-                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
+                        className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 hover:shadow-[#0FB8AD]/30 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
                     >
                         <FaDownload className="text-sm" />
                         Download
@@ -438,3 +438,4 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
         </div>
     );
 }
+

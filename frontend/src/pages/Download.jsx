@@ -2,7 +2,7 @@ import { useContext, useState, useRef, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
-import { FaSearch, FaChevronDown, FaFilter } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaFilter, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import SubjectCard from "../components/SubjectCard";
 import { subjectAPI } from "../lib/api";
 
@@ -85,6 +85,11 @@ export default function Download() {
     const [filteredSubjects, setFilteredSubjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(12);
+    const contentRef = useRef(null);
 
     // Fetch subjects from backend
     useEffect(() => {
@@ -94,6 +99,7 @@ export default function Download() {
     // Filter subjects whenever filters change
     useEffect(() => {
         filterSubjects();
+        setCurrentPage(1); // Reset to first page when filters change
     }, [subjects, searchQuery, selectedBranch, selectedSemester]);
 
     const fetchSubjects = async () => {
@@ -140,12 +146,62 @@ export default function Download() {
         setSearchQuery("");
         setSelectedBranch("All Branches");
         setSelectedSemester("All Semesters");
+        setCurrentPage(1);
+    };
+
+    // Calculate pagination
+    const totalPages = Math.ceil(filteredSubjects.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentSubjects = filteredSubjects.slice(startIndex, endIndex);
+
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+        // Scroll to top of content
+        if (contentRef.current) {
+            contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    const handleItemsPerPageChange = (value) => {
+        setItemsPerPage(parseInt(value));
+        setCurrentPage(1);
+    };
+
+    // Generate page numbers to display
+    const getPageNumbers = () => {
+        const pages = [];
+        const maxVisiblePages = 5;
+        
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pages.push(1);
+                pages.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+            } else {
+                pages.push(1);
+                pages.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+            }
+        }
+        
+        return pages;
     };
 
     return (
         <div className={`${theme === "dark"
-            ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+            ? "bg-[#0B1220]"
+            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
             } min-h-screen`}>
             <Navbar />
             
@@ -158,7 +214,7 @@ export default function Download() {
             </div>
 
             {/* Search and Filters */}
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-6">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 mb-6" ref={contentRef}>
                 <div className={`w-full rounded-2xl p-4 flex flex-col lg:flex-row items-stretch lg:items-center gap-3 border ${
                     theme === "dark" 
                         ? "border-white/10 bg-white/[0.02] backdrop-blur-lg" 
@@ -215,8 +271,28 @@ export default function Download() {
                 </div>
 
                 {/* Results Count */}
-                <div className={`text-sm mt-3 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                    Showing {filteredSubjects.length} of {subjects.length} subjects
+                <div className={`flex flex-wrap items-center justify-between gap-3 text-sm mt-3 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                    <div>
+                        Showing {startIndex + 1}-{Math.min(endIndex, filteredSubjects.length)} of {filteredSubjects.length} subjects
+                    </div>
+                    
+                    {/* Items per page selector */}
+                    <div className="flex items-center gap-2">
+                        <span className="text-xs md:text-sm">Show:</span>
+                        <select
+                            value={itemsPerPage}
+                            onChange={(e) => handleItemsPerPageChange(e.target.value)}
+                            className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium outline-none cursor-pointer transition-all ${
+                                theme === "dark"
+                                    ? "bg-[#1e293b] border border-white/10 text-white hover:bg-[#334155] [&>option]:bg-[#1e293b] [&>option]:text-white"
+                                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                            }`}
+                        >
+                            <option value="6">6</option>
+                            <option value="12">12</option>
+                            <option value="24">24</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -224,7 +300,7 @@ export default function Download() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                        <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${theme === "dark" ? "border-[#0FB8AD]" : "border-teal-500"}`}></div>
                     </div>
                 ) : error ? (
                     <div className="text-center py-20">
@@ -233,7 +309,10 @@ export default function Download() {
                         </p>
                         <button
                             onClick={fetchSubjects}
-                            className="mt-4 px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+                            className={theme === "dark" 
+                                ? "mt-4 px-6 py-2 bg-[#0FB8AD] hover:bg-[#0FB8AD]/80 text-[#0B1220] rounded-lg font-semibold"
+                                : "mt-4 px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
+                            }
                         >
                             Retry
                         </button>
@@ -248,15 +327,85 @@ export default function Download() {
                         </p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredSubjects.map((subject, index) => (
-                            <SubjectCard 
-                                key={subject._id} 
-                                subject={subject} 
-                                index={index} 
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {currentSubjects.map((subject, index) => (
+                                <SubjectCard 
+                                    key={subject._id} 
+                                    subject={subject} 
+                                    index={startIndex + index} 
+                                />
+                            ))}
+                        </div>
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                            <div className={`mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 ${
+                                theme === "dark" ? "text-gray-300" : "text-gray-700"
+                            }`}>
+                                {/* Previous Button */}
+                                <button
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    disabled={currentPage === 1}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                                        currentPage === 1
+                                            ? theme === "dark"
+                                                ? "bg-white/[0.02] text-gray-600 cursor-not-allowed"
+                                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            : theme === "dark"
+                                            ? "bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-white"
+                                            : "bg-white hover:bg-gray-50 border border-gray-200 shadow-sm"
+                                    }`}
+                                >
+                                    <FaChevronLeft className="text-xs" />
+                                    <span className="hidden sm:inline">Previous</span>
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex items-center gap-2">
+                                    {getPageNumbers().map((page, index) => (
+                                        page === '...' ? (
+                                            <span key={`ellipsis-${index}`} className="px-2 text-gray-500">...</span>
+                                        ) : (
+                                            <button
+                                                key={page}
+                                                onClick={() => handlePageChange(page)}
+                                                className={`w-10 h-10 rounded-lg font-medium transition-all ${
+                                                    currentPage === page
+                                                        ? theme === "dark"
+                                                            ? "bg-[#0FB8AD] text-[#0B1220] shadow-lg shadow-[#0FB8AD]/20"
+                                                            : "bg-teal-600 text-white shadow-md"
+                                                        : theme === "dark"
+                                                        ? "bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-white"
+                                                        : "bg-white hover:bg-gray-50 border border-gray-200 text-gray-700"
+                                                }`}
+                                            >
+                                                {page}
+                                            </button>
+                                        )
+                                    ))}
+                                </div>
+
+                                {/* Next Button */}
+                                <button
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    disabled={currentPage === totalPages}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all ${
+                                        currentPage === totalPages
+                                            ? theme === "dark"
+                                                ? "bg-white/[0.02] text-gray-600 cursor-not-allowed"
+                                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                            : theme === "dark"
+                                            ? "bg-white/[0.05] hover:bg-white/[0.08] border border-white/10 text-white"
+                                            : "bg-white hover:bg-gray-50 border border-gray-200 shadow-sm"
+                                    }`}
+                                >
+                                    <span className="hidden sm:inline">Next</span>
+                                    <FaChevronRight className="text-xs" />
+                                </button>
+                            </div>
+                        )}
+                    </>
                 )}
             </div>
 

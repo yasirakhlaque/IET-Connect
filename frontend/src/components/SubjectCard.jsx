@@ -22,7 +22,7 @@ export default function SubjectCard({ subject, index }) {
                 <h3 className={`flex justify-between items-center font-medium ${theme === "light" ? "text-gray-800" : "text-gray-200"}`}>Downloads: <span>{subject.downloads || 0}</span></h3>
             </div>
             <Link to={`/subject/${subject._id}`}>
-                <button className='flex gap-2 items-center justify-center w-full rounded-lg bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 font-semibold text-xs md:text-sm hover:shadow-lg transition-all cursor-pointer'>
+                <button className='flex gap-2 items-center justify-center w-full rounded-lg bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white py-2 font-semibold text-xs md:text-sm hover:shadow-lg transition-all cursor-pointer'>
                     <FiBookOpen /> View PYQs
                 </button>
             </Link>

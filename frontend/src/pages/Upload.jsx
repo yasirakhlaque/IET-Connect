@@ -218,15 +218,15 @@ export default function Upload() {
 
     return (
         <div className={`${theme === "dark"
-            ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+            ? "bg-[#0B1220]"
+            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
             }`}>
             <div className="min-h-screen relative">
                 <Navbar />
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <div className={`text-center mb-8 ${theme === "light" ? "text-gray-700" : "text-white"}`}>
                         <h1 className="text-2xl md:text-4xl font-bold mb-2">Upload PYQs</h1>
-                        <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                        <p className={`text-xs md:text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                             Share Your Question Paper With Fellow Students
                         </p>
                     </div>
@@ -261,7 +261,7 @@ export default function Upload() {
                         : "bg-white shadow-lg border-gray-200"
                         }`}>
                         {theme === "dark" && (
-                            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.05] to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#0FB8AD]/[0.05] to-transparent pointer-events-none" />
                         )}
 
                         <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
@@ -279,15 +279,15 @@ export default function Upload() {
                                     onDrop={handleDrop}
                                     className={`border-2 border-dashed rounded-xl p-8 transition-all ${dragActive
                                         ? theme === "dark"
-                                            ? "border-purple-500 bg-purple-500/10"
-                                            : "border-purple-500 bg-purple-50"
+                                            ? "border-[#0FB8AD] bg-[#0FB8AD]/10"
+                                            : "border-teal-500 bg-teal-50"
                                         : theme === "dark"
                                             ? "border-white/20 hover:border-white/30"
                                             : "border-gray-300 hover:border-gray-400"
                                         }`}
                                 >
                                     <div className="flex flex-col items-center justify-center text-center">
-                                        <FaCloudUploadAlt className={`text-5xl mb-4 ${theme === "dark" ? "text-gray-400" : "text-gray-500"
+                                        <FaCloudUploadAlt className={`text-5xl mb-4 ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-500"
                                             }`} />
 
                                         {selectedFile ? (
@@ -352,8 +352,8 @@ export default function Upload() {
                                         required
                                         readOnly
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                            : "bg-gray-50 border-gray-300 text-gray-900 placeholder-gray-400 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                             }`}
                                     />
                                     <p className={`text-xs mt-1 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
@@ -373,8 +373,8 @@ export default function Upload() {
                                         onChange={handleInputChange}
                                         required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                             }`}
                                     >
                                         <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select year</option>
@@ -399,8 +399,8 @@ export default function Upload() {
                                         onChange={handleInputChange}
                                         required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                             }`}
                                     >
                                         <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select branch</option>
@@ -425,8 +425,8 @@ export default function Upload() {
                                         onChange={handleInputChange}
                                         required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                             }`}
                                     >
                                         <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Select semester</option>
@@ -451,8 +451,8 @@ export default function Upload() {
                                         required
                                         disabled={!formData.branch || !formData.semester}
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10 disabled:opacity-50"
-                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 disabled:opacity-50"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-[#0FB8AD]/50 focus:bg-white/10 disabled:opacity-50"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20 disabled:opacity-50"
                                             }`}
                                     >
                                         <option value="" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>
@@ -485,8 +485,8 @@ export default function Upload() {
                                         onChange={handleInputChange}
                                         required
                                         className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all ${theme === "dark"
-                                            ? "bg-white/5 border-white/10 text-white focus:border-purple-500/50 focus:bg-white/10"
-                                            : "bg-white border-gray-300 text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                            ? "bg-white/5 border-white/10 text-white focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                            : "bg-white border-gray-300 text-gray-900 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                             }`}
                                     >
                                         <option value="Previous Year Question Paper" className={`text-xs sm:text-sm ${theme === "dark" ? "text-gray-200 bg-gray-600" : "text-gray-700"}`}>Previous Year Question Paper</option>
@@ -509,8 +509,8 @@ export default function Upload() {
                                     placeholder="Add any additional details about this question paper..."
                                     rows={4}
                                     className={`w-full px-4 py-2.5 rounded-lg border outline-none transition-all resize-none ${theme === "dark"
-                                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-purple-500/50 focus:bg-white/10"
-                                        : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20"
+                                        ? "bg-white/5 border-white/10 text-white placeholder-gray-500 focus:border-[#0FB8AD]/50 focus:bg-white/10"
+                                        : "bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:border-[#0FB8AD] focus:ring-2 focus:ring-[#0FB8AD]/20"
                                         }`}
                                 />
                             </div>
@@ -523,7 +523,9 @@ export default function Upload() {
                                     className={`w-full py-3 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-xs sm:text-sm ${
                                         uploading || uploadSuccess || !selectedFile
                                             ? "bg-gray-400 cursor-not-allowed"
-                                            : "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                                            : theme === "dark"
+                                                ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] hover:shadow-[#0FB8AD]/30"
+                                                : "bg-gradient-to-r from-teal-600 to-teal-500 hover:from-teal-700 hover:to-teal-600 text-white"
                                     }`}
                                 >
                                     {uploading ? (
