@@ -11,7 +11,7 @@ export default function NotFound() {
     return (
         <div className={`min-h-screen flex flex-col ${theme === "dark"
             ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
             }`}>
             <Navbar />
             
@@ -20,20 +20,20 @@ export default function NotFound() {
                     {/* 404 Icon */}
                     <div className="mb-8 flex justify-center">
                         <div className={`p-6 rounded-full ${theme === "dark"
-                            ? "bg-purple-500/20"
-                            : "bg-purple-100"
+                            ? "bg-[#0FB8AD]/20"
+                            : "bg-teal-100"
                             }`}>
                             <FaExclamationTriangle className={`text-6xl ${theme === "dark"
-                                ? "text-purple-400"
-                                : "text-purple-600"
+                                ? "text-[#0FB8AD]"
+                                : "text-teal-600"
                                 }`} />
                         </div>
                     </div>
 
                     {/* 404 Text */}
                     <h1 className={`text-8xl md:text-9xl font-bold mb-4 ${theme === "dark"
-                        ? "text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400"
-                        : "text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"
+                        ? "text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-400"
+                        : "text-transparent bg-clip-text bg-gradient-to-r from-teal-600 to-blue-600"
                         }`}>
                         404
                     </h1>
@@ -55,15 +55,15 @@ export default function NotFound() {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <Link to="/">
-                            <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 justify-center w-full sm:w-auto">
+                            <button className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center gap-2 justify-center w-full sm:w-auto">
                                 <FaHome />
                                 Go to Home
                             </button>
                         </Link>
                         <Link to="/download">
                             <button className={`px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 justify-center w-full sm:w-auto border-2 ${theme === "dark"
-                                ? "border-purple-500 text-purple-300 hover:bg-purple-500/10"
-                                : "border-purple-500 text-purple-700 hover:bg-purple-50"
+                                ? "border-[#0FB8AD] text-[#0FB8AD] hover:bg-[#0FB8AD]/10"
+                                : "border-[#0FB8AD] text-teal-700 hover:bg-teal-50"
                                 }`}>
                                 <FaDownload />
                                 Browse Subjects
@@ -84,20 +84,20 @@ export default function NotFound() {
                         </p>
                         <div className="flex flex-wrap gap-4 justify-center">
                             <Link to="/upload" className={`text-sm hover:underline ${theme === "dark"
-                                ? "text-purple-400"
-                                : "text-purple-600"
+                                ? "text-[#0FB8AD]"
+                                : "text-teal-600"
                                 }`}>
                                 Upload Question Papers
                             </Link>
                             <Link to="/profile" className={`text-sm hover:underline ${theme === "dark"
-                                ? "text-purple-400"
-                                : "text-purple-600"
+                                ? "text-[#0FB8AD]"
+                                : "text-teal-600"
                                 }`}>
                                 My Profile
                             </Link>
                             <Link to="/login" className={`text-sm hover:underline ${theme === "dark"
-                                ? "text-purple-400"
-                                : "text-purple-600"
+                                ? "text-[#0FB8AD]"
+                                : "text-teal-600"
                                 }`}>
                                 Login
                             </Link>
