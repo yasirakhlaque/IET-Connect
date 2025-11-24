@@ -22,8 +22,8 @@ export default function Footer() {
                         <Link
                             to="/"
                             className={`text-sm transition-colors ${theme === "dark"
-                                ? "text-gray-400 hover:text-purple-400"
-                                : "text-gray-600 hover:text-purple-600"
+                                ? "text-gray-400 hover:text-[#0FB8AD]"
+                                : "text-gray-600 hover:text-teal-600"
                                 }`}
                         >
                             Home
@@ -31,8 +31,8 @@ export default function Footer() {
                         <Link
                             to="/download"
                             className={`text-sm transition-colors ${theme === "dark"
-                                ? "text-gray-400 hover:text-purple-400"
-                                : "text-gray-600 hover:text-purple-600"
+                                ? "text-gray-400 hover:text-[#0FB8AD]"
+                                : "text-gray-600 hover:text-teal-600"
                                 }`}
                         >
                             Browse
@@ -40,8 +40,8 @@ export default function Footer() {
                         <a
                             href="mailto:support@ietconnect.edu"
                             className={`text-sm transition-colors ${theme === "dark"
-                                ? "text-gray-400 hover:text-purple-400"
-                                : "text-gray-600 hover:text-purple-600"
+                                ? "text-gray-400 hover:text-[#0FB8AD]"
+                                : "text-gray-600 hover:text-teal-600"
                                 }`}
                         >
                             Contact

@@ -71,8 +71,8 @@ export default function LandingPage() {
 
   return (
     <div className={`${theme === "dark"
-      ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-      : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+      ? "bg-[#0B1220]"
+      : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
       }`}>
       {/* Hero Section with gradient background */}
       <div className={`min-h-screen relative overflow-hidden `}>
@@ -82,11 +82,11 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
           <div className="text-center mb-12">
             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${theme === "dark"
-              ? "bg-purple-500/10 border border-purple-500/20"
-              : "bg-purple-100 border border-purple-200"
+              ? "bg-[#0FB8AD]/10 border border-[#0FB8AD]/30"
+              : "bg-teal-100 border border-teal-200"
               }`}>
-              <MdVerified className="text-purple-500" />
-              <span className={`text-sm font-medium ${theme === "dark" ? "text-purple-300" : "text-purple-700"}`}>
+              <MdVerified className={theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"} />
+              <span className={`text-sm font-medium ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-700"}`}>
                 Modern College PYQ Platform
               </span>
             </div>
@@ -94,7 +94,10 @@ export default function LandingPage() {
             <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight ${theme === "dark" ? "text-white" : "text-gray-900"
               }`}>
               Never Miss a <br />
-              <span className="bg-gradient-to-r from-purple-400 via-purple-600 to-blue-500 bg-clip-text text-transparent">
+              <span className={theme === "dark" 
+                ? "bg-gradient-to-r from-[#0FB8AD] via-[#0FB8AD] to-[#F6C177] bg-clip-text text-transparent"
+                : "bg-gradient-to-r from-teal-500 via-teal-600 to-amber-400 bg-clip-text text-transparent"
+              }>
                 Question Again
               </span>
             </h1>
@@ -120,7 +123,10 @@ export default function LandingPage() {
               />
               <button 
                 onClick={handleSearch}
-                className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all text-xs md:text-sm">
+                className={theme === "dark"
+                  ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] px-6 py-2 rounded-full font-semibold hover:shadow-lg hover:shadow-[#0FB8AD]/20 transition-all text-xs md:text-sm"
+                  : "bg-gradient-to-r from-teal-600 to-teal-500 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all text-xs md:text-sm"
+                }>
                 Search
               </button>
             </div>
@@ -128,15 +134,18 @@ export default function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-4 justify-center items-center mb-16 text-xs md:text-sm">
               <Link to="/download">
-                <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-4 md:px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all flex items-center gap-2 group cursor-pointer ">
+                <button className={theme === "dark"
+                  ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] px-4 md:px-8 py-3 rounded-full font-semibold hover:shadow-xl hover:shadow-[#0FB8AD]/30 transition-all flex items-center gap-2 group cursor-pointer"
+                  : "bg-gradient-to-r from-teal-600 to-teal-500 text-white px-4 md:px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all flex items-center gap-2 group cursor-pointer"
+                }>
                   <FaCloudUploadAlt className="group-hover:scale-110 transition-transform" />
                   Browse Subjects
                 </button>
               </Link>
               <Link to="/upload">
                 <button className={`px-4 md:px-8 py-3 rounded-full font-semibold border-2 transition-all cursor-pointer ${theme === "dark"
-                  ? "border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
-                  : "border-purple-500 text-purple-700 hover:bg-purple-50"
+                  ? "border-[#0FB8AD]/50 text-[#0FB8AD] hover:bg-[#0FB8AD]/10"
+                  : "border-teal-500 text-teal-700 hover:bg-teal-50"
                   }`}>
                   Upload PYQ
                 </button>
@@ -180,10 +189,10 @@ export default function LandingPage() {
 function StatCard({ icon, number, label, theme }) {
   return (
     <div className={`p-6 rounded-2xl text-center transition-all hover:scale-105 ${theme === "dark"
-      ? "bg-white/5 backdrop-blur-sm border border-white/10"
+      ? "bg-white/5 backdrop-blur-sm border border-white/10 hover:border-[#0FB8AD]/30"
       : "bg-white shadow-lg border border-gray-100"
       }`}>
-      <div className={`flex justify-center mb-3 ${theme === "dark" ? "text-purple-400" : "text-purple-600"
+      <div className={`flex justify-center mb-3 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"
         }`}>
         {icon}
       </div>
@@ -191,7 +200,7 @@ function StatCard({ icon, number, label, theme }) {
         }`}>
         {number}
       </div>
-      <div className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+      <div className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"
         }`}>
         {label}
       </div>
@@ -244,7 +253,7 @@ function FeaturedSubjects({ theme }) {
             No subjects available yet. Check back soon!
           </p>
           <Link to="/download">
-            <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+            <button className="bg-gradient-to-r from-teal-600 to-teal-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
               Browse All Subjects
             </button>
           </Link>
@@ -276,8 +285,8 @@ function FeaturedSubjects({ theme }) {
         <div className="text-center">
           <Link to="/download">
             <button className={`px-8 py-3 rounded-full font-semibold border-2 transition-all cursor-pointer ${theme === "dark"
-              ? "border-purple-500/50 text-purple-300 hover:bg-purple-500/10"
-              : "border-purple-500 text-purple-700 hover:bg-purple-50"
+              ? "border-[#0FB8AD]/50 text-[#0FB8AD] hover:bg-[#0FB8AD]/10"
+              : "border-teal-500 text-teal-700 hover:bg-teal-50"
               }`}>
               View All Subjects →
             </button>
@@ -299,16 +308,19 @@ function SubjectCard({ subject, theme }) {
     <div 
       onClick={handleViewSubject}
       className={`rounded-2xl p-6 transition-all hover:scale-105 hover:shadow-2xl cursor-pointer ${theme === "dark"
-        ? "bg-white/2 backdrop-blur-sm border border-white/10 hover:border-purple-500/50"
-        : "bg-white/10 shadow-lg border border-gray-100 hover:border-purple-300"
+        ? "bg-white/5 backdrop-blur-sm border border-white/10 hover:border-[#0FB8AD]/50 hover:shadow-[#0FB8AD]/10"
+        : "bg-white shadow-lg border border-gray-100 hover:border-teal-300"
       }`}>
       <div className="flex items-center justify-between mb-4">
-        <div className={`px-3 py-1 rounded-lg bg-gradient-to-br ${theme === "light" ? "text-blue-800":"text-blue-200"} bg-blue-600/30 flex items-center justify-center border-blue-700 border-2`}>
+        <div className={`px-3 py-1 rounded-lg ${theme === "dark" 
+          ? "bg-[#0FB8AD]/20 border-[#0FB8AD]/40 text-[#0FB8AD]" 
+          : "bg-teal-100 border-teal-300 text-teal-800"
+        } flex items-center justify-center border-2`}>
           <span className="font-semibold text-xs">{subject.branch}</span>
         </div>
         <div className={`px-2 py-1 rounded-lg text-xs font-medium ${theme === "dark"
-          ? "bg-purple-500/20 text-purple-300"
-          : "bg-purple-100 text-purple-700"
+          ? "bg-[#F6C177]/20 text-[#F6C177]"
+          : "bg-amber-100 text-amber-700"
         }`}>
           Sem {subject.semester}
         </div>
@@ -317,17 +329,17 @@ function SubjectCard({ subject, theme }) {
         }`}>
         {subject.name}
       </h3>
-      <p className={`text-xs mb-3 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+      <p className={`text-xs mb-3 ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
         {subject.code}
       </p>
 
       <div className="flex items-center gap-1 justify-between">
-        <div className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+        <div className={`text-xs ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
           {subject.credits} Credits
         </div>
         <div className={`text-sm font-medium transition-all hover:underline ${theme === "dark"
-          ? "text-blue-400"
-          : "text-purple-600"
+          ? "text-[#0FB8AD]"
+          : "text-teal-600"
           }`}>
           View →
         </div>

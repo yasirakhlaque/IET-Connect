@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ThemeContext } from "../App";
 import ThemeButton from "./ThemeButton";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { IoDocumentText } from "react-icons/io5";
 
 export default function Navbar({ setIsSignUpActive }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -31,11 +30,11 @@ export default function Navbar({ setIsSignUpActive }) {
         ? "bg-white/5 border border-white/10"
         : "bg-white/10 border border-gray-200 shadow-lg"
         }`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-2 md:py-4">
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2 group">
-              <span className={`font-bold text-xl cursor-pointer ${theme === "dark" ? "text-white" : "text-gray-900"
+              <span className={`font-bold text-lg md:text-xl cursor-pointer ${theme === "dark" ? "text-white" : "text-gray-900"
                 }`}>
                 IET Connect
               </span>
@@ -45,7 +44,7 @@ export default function Navbar({ setIsSignUpActive }) {
             <div className="hidden md:flex items-center gap-8">
               <ul className="flex gap-8">
                 {NavOpt.map((opt, index) => (
-                  <li key={index} className={`font-medium transition-colors hover:text-purple-400 hover:underline cursor-pointer ${theme === "dark" ? "text-gray-300" : "text-gray-700"
+                  <li key={index} className={`font-medium transition-colors hover:text-[#0FB8AD] hover:underline cursor-pointer ${theme === "dark" ? "text-gray-300" : "text-gray-700"
                     }`}>
                     <Link to={opt.link}>
                       {opt.name}
@@ -60,7 +59,7 @@ export default function Navbar({ setIsSignUpActive }) {
                 {isLoggedIn ? (
                   <>
                     <Link to="/profile">
-                      <button className="bg-gradient-to-r from-purple-600 to-blue-500 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all">
+                      <button className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all">
                         Profile
                       </button>
                     </Link>
@@ -82,8 +81,8 @@ export default function Navbar({ setIsSignUpActive }) {
                       <button
                         onClick={() => setIsSignUpActive(false)}
                         className={`px-5 py-2 rounded-full font-medium transition-all ${theme === "dark"
-                          ? "text-purple-300 hover:bg-purple-500/10"
-                          : "text-purple-700 hover:bg-purple-50"
+                          ? "text-[#0FB8AD] hover:bg-[#0FB8AD]/10"
+                          : "text-teal-700 hover:bg-teal-50"
                           }`}
                       >
                         Login
@@ -92,7 +91,7 @@ export default function Navbar({ setIsSignUpActive }) {
                     <Link to="/login">
                       <button
                         onClick={() => setIsSignUpActive(true)}
-                        className="bg-gradient-to-r from-purple-600 to-blue-500 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all"
+                        className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all"
                       >
                         Sign Up
                       </button>
@@ -141,7 +140,7 @@ export default function Navbar({ setIsSignUpActive }) {
             ))}
           </ul>
 
-          <div className={`pt-4 border-t ${theme === "dark" ? "border-white/10" : "border-gray-200"}`}>
+          <div className={`pt-4 border-t text-center ${theme === "dark" ? "border-white/10" : "border-gray-200"}`}>
             <ThemeButton />
           </div>
 
@@ -149,7 +148,7 @@ export default function Navbar({ setIsSignUpActive }) {
             {isLoggedIn ? (
               <>
                 <Link to="/profile" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 px-6 py-3 rounded-lg text-white font-medium">
+                  <button className="w-full bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-6 py-3 rounded-lg text-white font-medium">
                     Profile
                   </button>
                 </Link>
@@ -175,8 +174,8 @@ export default function Navbar({ setIsSignUpActive }) {
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full px-6 py-3 rounded-lg font-medium border-2 ${theme === "dark"
-                      ? "border-purple-500 text-purple-300"
-                      : "border-purple-500 text-purple-700"
+                      ? "border-[#0FB8AD] text-[#0FB8AD]"
+                      : "border-[#0FB8AD] text-teal-700"
                       }`}
                   >
                     Login
@@ -188,7 +187,7 @@ export default function Navbar({ setIsSignUpActive }) {
                       setIsSignUpActive(true);
                       setMobileMenuOpen(false);
                     }}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-500 px-6 py-3 rounded-lg text-white font-medium"
+                    className="w-full bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-6 py-3 rounded-lg text-white font-medium"
                   >
                     Sign Up
                   </button>
