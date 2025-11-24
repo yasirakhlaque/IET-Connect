@@ -4,13 +4,28 @@ import QuestionPaper from '../models/questionpaper.model.js';
 // Get all subjects with optional filtering by branch and semester
 export const getAllSubjects = async (req, res) => {
   try {
-    const { branch, semester } = req.query;
+    const { branch, semester, page = 1, limit = 12 } = req.query;
     
     const filter = {};
-    if (branch) filter.branch = branch;
-    if (semester) filter.semester = parseInt(semester);
+    if (branch && branch !== 'All Branches') filter.branch = branch;
+    if (semester && semester !== 'All Semesters') {
+      const semNum = parseInt(semester.replace(/\D/g, ''));
+      if (semNum) filter.semester = semNum;
+    }
 
-    const subjects = await Subject.find(filter).sort({ branch: 1, semester: 1, name: 1 }).lean();
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get total count for pagination info
+    const totalCount = await Subject.countDocuments(filter);
+
+    const subjects = await Subject.find(filter)
+      .sort({ branch: 1, semester: 1, name: 1 })
+      .skip(skip)
+      .limit(limitNum)
+      .lean();
 
     // Get stats for each subject from question papers
     const subjectsWithStats = await Promise.all(
@@ -33,6 +48,9 @@ export const getAllSubjects = async (req, res) => {
     res.json({
       message: 'Subjects fetched successfully',
       count: subjectsWithStats.length,
+      totalCount,
+      currentPage: pageNum,
+      totalPages: Math.ceil(totalCount / limitNum),
       subjects: subjectsWithStats,
     });
   } catch (error) {
