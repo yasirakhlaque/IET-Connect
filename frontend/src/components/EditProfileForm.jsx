@@ -135,7 +135,7 @@ export default function EditProfileForm({ onClose }) {
                         </button>
                         <button 
                             type="submit" 
-                            className="flex items-center gap-2 justify-center text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg px-4 cursor-pointer disabled:opacity-50"
+                            className="flex items-center gap-2 justify-center text-xs md:text-sm bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white py-2.5 rounded-lg font-semibold hover:shadow-[#0FB8AD]/30 transition shadow-lg px-4 cursor-pointer disabled:opacity-50"
                             disabled={saving}
                         >
                             <FaSave />

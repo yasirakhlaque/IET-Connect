@@ -79,7 +79,7 @@ export default function Profile() {
         return (
             <div className={`min-h-screen flex items-center justify-center ${theme === "dark"
                 ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
                 }`}>
                 <div className={`text-xl ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                     Loading...
@@ -93,10 +93,10 @@ export default function Profile() {
         return (
             <div className={`min-h-screen flex items-center justify-center ${theme === "dark"
                 ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
                 }`}>
                 <div className={`text-xl ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                    User not found. <button onClick={() => navigate("/login")} className="text-purple-500 underline">Login</button>
+                    User not found. <button onClick={() => navigate("/login")} className="text-teal-500 underline">Login</button>
                 </div>
             </div>
         );
@@ -138,7 +138,7 @@ export default function Profile() {
     return (
         <div className={`${theme === "dark"
             ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-purple-200"
+            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
             }`}>
             <Navbar />
 
@@ -158,15 +158,15 @@ export default function Profile() {
                             : "bg-white shadow-lg border-gray-200"
                             }`}>
                             {theme === "dark" && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.05] to-transparent pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-teal-500/[0.05] to-transparent pointer-events-none" />
                             )}
 
                             <div className="relative z-10">
                                 {/* Profile Avatar */}
                                 <div className="flex justify-center mb-4">
                                     <div className={`w-24 h-24 rounded-full flex items-center justify-center text-3xl font-bold ${theme === "dark"
-                                        ? "bg-gradient-to-br from-purple-600 to-blue-500"
-                                        : "bg-gradient-to-br from-purple-500 to-blue-400"
+                                        ? "bg-gradient-to-br from-[#0FB8AD] to-[#0FB8AD]/80"
+                                        : "bg-gradient-to-br from-teal-500 to-blue-400"
                                         } text-white`}>
                                         {/* Show first letter of roll number if no name */}
                                         {user.rollno ? user.rollno.slice(0, 2) : user.email.slice(0, 2).toUpperCase()}
@@ -256,8 +256,8 @@ export default function Profile() {
                                 onClick={() => setActiveTab("uploads")}
                                 className={`pb-3 px-4 font-semibold transition-all ${activeTab === "uploads"
                                     ? theme === "dark"
-                                        ? "text-purple-400 border-b-2 border-purple-400"
-                                        : "text-purple-600 border-b-2 border-purple-600"
+                                        ? "text-[#0FB8AD] border-b-2 border-teal-400"
+                                        : "text-teal-600 border-b-2 border-teal-600"
                                     : theme === "dark"
                                         ? "text-gray-400 hover:text-gray-300"
                                         : "text-gray-600 hover:text-gray-900"
@@ -269,8 +269,8 @@ export default function Profile() {
                                 onClick={() => setActiveTab("downloads")}
                                 className={`pb-3 px-4 font-semibold transition-all ${activeTab === "downloads"
                                     ? theme === "dark"
-                                        ? "text-purple-400 border-b-2 border-purple-400"
-                                        : "text-purple-600 border-b-2 border-purple-600"
+                                        ? "text-[#0FB8AD] border-b-2 border-teal-400"
+                                        : "text-teal-600 border-b-2 border-teal-600"
                                     : theme === "dark"
                                         ? "text-gray-400 hover:text-gray-300"
                                         : "text-gray-600 hover:text-gray-900"
@@ -286,7 +286,7 @@ export default function Profile() {
                                 ? "bg-white/[0.03] border border-white/[0.08]"
                                 : "bg-white border border-gray-200 shadow-sm"
                                 }`}>
-                                <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-purple-400" : "text-purple-600"
+                                <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"
                                     }`}>
                                     {activeTab === "uploads" ? uploads.filter(u => u.approvalStatus === "Approved").length : downloads.length}
                                 </div>
@@ -356,7 +356,7 @@ export default function Profile() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/upload')}
-                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:from-purple-700 hover:to-blue-600 transition"
+                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
                                             Upload Now
                                         </button>
@@ -385,7 +385,7 @@ export default function Profile() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/download')}
-                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg hover:from-purple-700 hover:to-blue-600 transition"
+                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
                                             Browse Library
                                         </button>
@@ -408,8 +408,8 @@ export default function Profile() {
 function ActivityCard({ item, type, theme, getStatusColor }) {
     return (
         <div className={`rounded-xl p-5 border transition-all hover:shadow-xl cursor-pointer relative overflow-hidden ${theme === "dark"
-            ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-purple-500/30"
-            : "bg-white shadow-md border-gray-200 hover:border-purple-300"
+            ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-[#0FB8AD]/30"
+            : "bg-white shadow-md border-gray-200 hover:border-teal-300"
             }`}>
             {theme === "dark" && (
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
