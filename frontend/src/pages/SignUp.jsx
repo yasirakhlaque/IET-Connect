@@ -119,7 +119,7 @@ export default function SignUp({ setIsSignUpActive }) {
             : "bg-white border-gray-200"
             }`}>
             {/* Floating Icon */}
-            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg">
+            <div className={`absolute -top-10 left-1/2 transform -translate-x-1/2 ${theme === "dark" ? "bg-gradient-to-br from-[#0FB8AD] to-[#0FB8AD]/80" : "bg-gradient-to-br from-teal-600 to-teal-500"} text-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg`}>
                 <FaUser style={{ fontSize: '2.5rem' }} />
             </div>
 
@@ -214,7 +214,10 @@ export default function SignUp({ setIsSignUpActive }) {
                     {passwordMatchError && <div className="text-red-400 text-sm mt-1">Passwords do not match</div>}
                 </div>
 
-                <button className={`bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg text-xs md:text-sm ${isSigningUp ? 'opacity-50 cursor-not-allowed' : ''}`} type="submit">
+                <button className={`${theme === "dark"
+                    ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] hover:shadow-xl hover:shadow-[#0FB8AD]/30"
+                    : "bg-gradient-to-r from-teal-600 to-teal-500 text-white hover:from-teal-700 hover:to-teal-600"
+                  } py-2.5 rounded-lg font-semibold transition shadow-lg text-xs md:text-sm ${isSigningUp ? 'opacity-50 cursor-not-allowed' : ''}`} type="submit">
                    {isSigningUp ? 'Signing Up...' : 'Sign Up'}
                 </button>
 
@@ -222,8 +225,8 @@ export default function SignUp({ setIsSignUpActive }) {
                 {studentExist && <p className="text-red-400 text-sm text-center">Student already exists with this Roll Number or Email.</p>}
                 <p className={`text-sm text-center ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     Already Have an account? <span className={`cursor-pointer font-medium transition ${theme === "dark"
-                        ? "text-purple-400 hover:text-purple-300"
-                        : "text-purple-600 hover:text-purple-700"
+                        ? "text-[#0FB8AD] hover:text-[#0FB8AD]/80"
+                        : "text-teal-600 hover:text-teal-700"
                         }`} onClick={() => setIsSignUpActive(false)}>Login</span>
                 </p>
             </form>

@@ -75,14 +75,14 @@ export default function Login() {
 
   return (
     <div className={`flex h-screen w-screen justify-center items-center ${theme === "dark"
-      ? "bg-gradient-to-br from-[#1a0b2e] via-[#2d1b4e] to-[#4a2c6d]"
-      : "bg-gradient-to-br from-white via-blue-50 to-purple-50"
+      ? "bg-[#0B1220]"
+      : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
       }`}>
       {/* Left Panel */}
       <div className={`hidden md:flex flex-col justify-center items-center gap-8 w-1/2 h-full relative overflow-hidden px-12 ${theme === "dark" ? "text-white" : "text-gray-900"
         }`}>
         {theme === "dark" && (
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-blue-600/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0FB8AD]/10 via-[#F6C177]/5 to-transparent" />
         )}
 
         <div className="relative z-10 flex flex-col items-center gap-8 max-w-md">
@@ -104,11 +104,11 @@ export default function Login() {
               ? "bg-white/5 border-white/10 backdrop-blur-sm"
               : "bg-white border-gray-200 shadow-sm"
               }`}>
-              <IoDocumentText className={`text-3xl mb-2 ${theme === "dark" ? "text-purple-400" : "text-purple-600"}`} />
+              <IoDocumentText className={`text-3xl mb-2 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"}`} />
               <h3 className={`font-semibold text-sm mb-1 ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                 250+ Papers
               </h3>
-              <p className={`text-xs ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+              <p className={`text-xs ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`}>
                 Verified PYQs
               </p>
             </div>
@@ -166,7 +166,7 @@ export default function Login() {
                 : "bg-white border-gray-200"
                 }`}>
                 {/* Floating Icon */}
-                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg">
+                <div className={`absolute -top-10 left-1/2 transform -translate-x-1/2 ${theme === "dark" ? "bg-gradient-to-br from-[#0FB8AD] to-[#0FB8AD]/80" : "bg-gradient-to-br from-teal-600 to-teal-500"} text-white rounded-full h-20 w-20 flex items-center justify-center shadow-lg`}>
                   <FaUser style={{ fontSize: '2.5rem' }} />
                 </div>
 
@@ -181,9 +181,9 @@ export default function Login() {
 
                 <form className="flex flex-col gap-4 mt-6" onSubmit={handleSubmit}>
                   <div>
-                    <div className={`flex items-center border rounded-lg px-3 py-2 focus-within:border-purple-400 transition ${theme === "dark"
-                      ? "border-white/20 bg-white/5"
-                      : "border-gray-300 bg-gray-50"
+                    <div className={`flex items-center border rounded-lg px-3 py-2 transition ${theme === "dark"
+                      ? "border-white/20 bg-white/5 focus-within:border-[#0FB8AD]/50"
+                      : "border-gray-300 bg-gray-50 focus-within:border-teal-400"
                       }`}>
                       <FaEnvelope className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
                       <input
@@ -202,9 +202,9 @@ export default function Login() {
                   </div>
 
                   <div>
-                    <div className={`flex items-center border rounded-lg px-3 py-2 focus-within:border-purple-400 transition ${theme === "dark"
-                      ? "border-white/20 bg-white/5"
-                      : "border-gray-300 bg-gray-50"
+                    <div className={`flex items-center border rounded-lg px-3 py-2 transition ${theme === "dark"
+                      ? "border-white/20 bg-white/5 focus-within:border-[#0FB8AD]/50"
+                      : "border-gray-300 bg-gray-50 focus-within:border-teal-400"
                       }`}>
                       <FaKey className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
                       <input
@@ -228,20 +228,23 @@ export default function Login() {
                   )}
 
                   <div className={`text-right text-sm cursor-pointer transition ${theme === "dark"
-                    ? "text-gray-300 hover:text-purple-400"
-                    : "text-gray-600 hover:text-purple-600"
+                    ? "text-[#9AA8B2] hover:text-[#0FB8AD]"
+                    : "text-gray-600 hover:text-teal-600"
                     }`}>
                     <Link to={"/forgotpassword"}>Forgot Password?</Link>
                   </div>
 
-                  <button type="submit" className={`text-xs md:text-sm bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2.5 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-600 transition shadow-lg ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                  <button type="submit" className={`text-xs md:text-sm ${theme === "dark" 
+                    ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] hover:shadow-lg hover:shadow-[#0FB8AD]/30"
+                    : "bg-gradient-to-r from-teal-600 to-teal-500 text-white hover:from-teal-700 hover:to-teal-600"
+                  } py-2.5 rounded-lg font-semibold transition shadow-lg ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     {isLoggingIn ? 'Logging In...' : 'Login'}
                   </button>
 
                   <p className={`text-sm text-center ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     Don't Have an account? <span className={`cursor-pointer font-medium transition ${theme === "dark"
-                      ? "text-purple-400 hover:text-purple-300"
-                      : "text-purple-600 hover:text-purple-700"
+                      ? "text-[#0FB8AD] hover:text-[#0FB8AD]/80"
+                      : "text-teal-600 hover:text-teal-700"
                       }`}
                       onClick={() => setIsSignUpActive(true)}>Create One</span>
                   </p>

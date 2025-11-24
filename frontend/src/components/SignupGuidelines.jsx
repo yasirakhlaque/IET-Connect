@@ -67,7 +67,7 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                 <div 
                     className={`relative max-w-2xl w-full rounded-2xl shadow-2xl overflow-hidden ${
                         theme === 'dark'
-                            ? 'bg-gradient-to-br from-[#1e1b4b] to-[#312e81] border border-white/10'
+                            ? 'bg-[#0B1220] border border-white/10'
                             : 'bg-white border border-gray-200'
                     }`}
                     onClick={(e) => e.stopPropagation()}
@@ -77,17 +77,21 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                         theme === 'dark' ? 'border-white/10' : 'border-gray-200'
                     }`}>
                         {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-blue-600/10" />
+                        <div className={`absolute inset-0 ${
+                            theme === 'dark' 
+                                ? 'bg-gradient-to-r from-[#0FB8AD]/10 to-[#F6C177]/10' 
+                                : 'bg-gradient-to-r from-teal-50 to-amber-50'
+                        }`} />
                         
                         <div className="relative flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <div className={`p-3 rounded-xl ${
                                     theme === 'dark' 
-                                        ? 'bg-purple-500/20' 
-                                        : 'bg-purple-100'
+                                        ? 'bg-[#F6C177]/20' 
+                                        : 'bg-amber-100'
                                 }`}>
                                     <FaExclamationTriangle className={`text-2xl ${
-                                        theme === 'dark' ? 'text-purple-400' : 'text-purple-600'
+                                        theme === 'dark' ? 'text-[#F6C177]' : 'text-amber-600'
                                     }`} />
                                 </div>
                                 <div>
@@ -97,7 +101,7 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                                         Important Guidelines
                                     </h2>
                                     <p className={`text-xs md:text-sm mt-1 ${
-                                        theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                        theme === 'dark' ? 'text-[#9AA8B2]' : 'text-gray-600'
                                     }`}>
                                         Please read carefully before signing up
                                     </p>
@@ -145,17 +149,17 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                         {/* Additional Info */}
                         <div className={`mt-6 p-4 rounded-xl border ${
                             theme === 'dark'
-                                ? 'bg-purple-500/5 border-purple-500/20'
-                                : 'bg-purple-50 border-purple-200'
+                                ? 'bg-[#0FB8AD]/5 border-[#0FB8AD]/20'
+                                : 'bg-teal-50 border-teal-200'
                         }`}>
                             <h4 className={`font-semibold mb-2 flex items-center gap-2 ${
-                                theme === 'dark' ? 'text-purple-300' : 'text-purple-700'
+                                theme === 'dark' ? 'text-[#0FB8AD]' : 'text-teal-700'
                             }`}>
                                 <FaCheckCircle />
                                 Why This Matters?
                             </h4>
                             <ul className={`text-xs md:text-sm space-y-1 ml-6 ${
-                                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                                theme === 'dark' ? 'text-[#9AA8B2]' : 'text-gray-700'
                             }`}>
                                 <li className="list-disc">We want to maintain a genuine academic community</li>
                                 <li className="list-disc">Real emails ensure you can recover your account</li>
@@ -171,13 +175,16 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                     }`}>
                         <div className="flex items-center justify-between gap-8">
                             <p className={`text-xs sm:text-sm ${
-                                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
+                                theme === 'dark' ? 'text-[#9AA8B2]' : 'text-gray-600'
                             }`}>
                                 By signing up, you agree to follow these guidelines
                             </p>
                             <button
                                 onClick={onClose}
-                                className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all text-xs sm:text-sm text-nowrap"
+                                className={theme === 'dark'
+                                    ? "px-6 py-2.5 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] rounded-lg font-semibold hover:shadow-lg hover:shadow-[#0FB8AD]/30 transition-all text-xs sm:text-sm text-nowrap"
+                                    : "px-6 py-2.5 bg-gradient-to-r from-teal-600 to-teal-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all text-xs sm:text-sm text-nowrap"
+                                }
                             >
                                 I Understand
                             </button>
@@ -196,11 +203,11 @@ export default function SignupGuidelines({ isOpen, onClose }) {
                     border-radius: 10px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: ${theme === 'dark' ? 'rgba(147, 51, 234, 0.5)' : 'rgba(147, 51, 234, 0.3)'};
+                    background: ${theme === 'dark' ? 'rgba(15, 184, 173, 0.5)' : 'rgba(13, 148, 136, 0.3)'};
                     border-radius: 10px;
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: ${theme === 'dark' ? 'rgba(147, 51, 234, 0.7)' : 'rgba(147, 51, 234, 0.5)'};
+                    background: ${theme === 'dark' ? 'rgba(15, 184, 173, 0.7)' : 'rgba(13, 148, 136, 0.5)'};
                 }
             `}</style>
         </>
