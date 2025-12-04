@@ -1,10 +1,11 @@
-import { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef, useEffect, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
 import { FaSearch, FaChevronDown, FaFilter, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import SubjectCard from "../components/SubjectCard";
-import { subjectAPI } from "../lib/api";
+import { useSubjects } from "../lib/useSubjects";
+import { useDebounce } from "../lib/useDebounce";
 
 // Modern Dropdown Component
 function ModernDropdown({ options, value, onChange, placeholder, theme }) {
@@ -81,42 +82,20 @@ export default function Download() {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedBranch, setSelectedBranch] = useState("All Branches");
     const [selectedSemester, setSelectedSemester] = useState("All Semesters");
-    const [subjects, setSubjects] = useState([]);
-    const [filteredSubjects, setFilteredSubjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
     
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(12);
     const contentRef = useRef(null);
 
-    // Fetch subjects from backend
-    useEffect(() => {
-        fetchSubjects();
-    }, []);
+    // Use React Query hook - data is automatically cached!
+    const { data: subjects = [], isLoading, isError, error } = useSubjects();
 
-    // Filter subjects whenever filters change
-    useEffect(() => {
-        filterSubjects();
-        setCurrentPage(1); // Reset to first page when filters change
-    }, [subjects, searchQuery, selectedBranch, selectedSemester]);
+    // Debounce search query to avoid filtering on every keystroke
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-    const fetchSubjects = async () => {
-        try {
-            setLoading(true);
-            const response = await subjectAPI.getAll();
-            setSubjects(response.data.subjects || []);
-            setError("");
-        } catch (err) {
-            console.error("Error fetching subjects:", err);
-            setError("Failed to load subjects. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const filterSubjects = () => {
+    // Memoize filtered subjects to avoid unnecessary recalculations
+    const filteredSubjects = useMemo(() => {
         let filtered = [...subjects];
 
         // Filter by branch
@@ -130,17 +109,22 @@ export default function Download() {
             filtered = filtered.filter(subject => subject.semester === semNum);
         }
 
-        // Filter by search query
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase();
+        // Filter by search query (debounced)
+        if (debouncedSearchQuery.trim()) {
+            const query = debouncedSearchQuery.toLowerCase();
             filtered = filtered.filter(subject => 
                 subject.name.toLowerCase().includes(query) ||
                 subject.branch.toLowerCase().includes(query)
             );
         }
 
-        setFilteredSubjects(filtered);
-    };
+        return filtered;
+    }, [subjects, debouncedSearchQuery, selectedBranch, selectedSemester]);
+
+    // Reset to first page when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearchQuery, selectedBranch, selectedSemester]);
 
     const handleClear = () => {
         setSearchQuery("");
@@ -298,17 +282,17 @@ export default function Download() {
 
             {/* Subjects Grid */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-                {loading ? (
+                {isLoading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className={`animate-spin rounded-full h-12 w-12 border-b-2 ${theme === "dark" ? "border-[#0FB8AD]" : "border-teal-500"}`}></div>
                     </div>
-                ) : error ? (
+                ) : isError ? (
                     <div className="text-center py-20">
                         <p className={`text-lg ${theme === "dark" ? "text-red-400" : "text-red-600"}`}>
-                            {error}
+                            {error?.message || "Failed to load subjects. Please try again later."}
                         </p>
                         <button
-                            onClick={fetchSubjects}
+                            onClick={() => window.location.reload()}
                             className={theme === "dark" 
                                 ? "mt-4 px-6 py-2 bg-[#0FB8AD] hover:bg-[#0FB8AD]/80 text-[#0B1220] rounded-lg font-semibold"
                                 : "mt-4 px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg"
