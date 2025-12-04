@@ -66,6 +66,13 @@ const questionPaperSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add indexes for faster queries
+questionPaperSchema.index({ subject: 1, approvalStatus: 1 }); // For subject paper queries
+questionPaperSchema.index({ approvalStatus: 1 }); // For admin approval queries
+questionPaperSchema.index({ uploadedBy: 1 }); // For user's uploads
+questionPaperSchema.index({ branch: 1, semester: 1 }); // For filtering
+questionPaperSchema.index({ createdAt: -1 }); // For sorting by date
+
 const QuestionPaper = mongoose.model('QuestionPaper', questionPaperSchema);
 
 export default QuestionPaper;

@@ -4,7 +4,7 @@ import QuestionPaper from '../models/questionpaper.model.js';
 // Get all subjects with optional filtering by branch and semester
 export const getAllSubjects = async (req, res) => {
   try {
-    const { branch, semester, page = 1, limit = 12 } = req.query;
+    const { branch, semester, page = 1, limit = 100 } = req.query;
     
     const filter = {};
     if (branch && branch !== 'All Branches') filter.branch = branch;
@@ -18,32 +18,46 @@ export const getAllSubjects = async (req, res) => {
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
 
-    // Get total count for pagination info
-    const totalCount = await Subject.countDocuments(filter);
+    // Parallel execution for better performance
+    const [totalCount, subjects] = await Promise.all([
+      Subject.countDocuments(filter),
+      Subject.find(filter)
+        .select('name branch semester credits code') // Only select needed fields
+        .sort({ branch: 1, semester: 1, name: 1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean() // Use lean for better performance (returns plain JS objects)
+    ]);
 
-    const subjects = await Subject.find(filter)
-      .sort({ branch: 1, semester: 1, name: 1 })
-      .skip(skip)
-      .limit(limitNum)
-      .lean();
+    // Optimize stats fetching with aggregation
+    const subjectIds = subjects.map(s => s._id);
+    const paperStats = await QuestionPaper.aggregate([
+      {
+        $match: {
+          subject: { $in: subjectIds },
+          approvalStatus: 'Approved'
+        }
+      },
+      {
+        $group: {
+          _id: '$subject',
+          count: { $sum: 1 },
+          totalDownloads: { $sum: '$downloads' }
+        }
+      }
+    ]);
 
-    // Get stats for each subject from question papers
-    const subjectsWithStats = await Promise.all(
-      subjects.map(async (subject) => {
-        const papers = await QuestionPaper.find({ 
-          subject: subject._id, 
-          approvalStatus: 'Approved' 
-        });
-        
-        const totalDownloads = papers.reduce((sum, paper) => sum + (paper.downloads || 0), 0);
-        
-        return {
-          ...subject,
-          pyqs_available: papers.length,
-          downloads: totalDownloads,
-        };
-      })
+    // Create a lookup map for O(1) access
+    const statsMap = new Map(
+      paperStats.map(stat => [stat._id.toString(), stat])
     );
+
+    // Combine subjects with stats
+    const subjectsWithStats = subjects.map(subject => ({
+      ...subject,
+      pyqs_available: statsMap.get(subject._id.toString())?.count || 0,
+      downloads: statsMap.get(subject._id.toString())?.totalDownloads || 0,
+    }));
 
     res.json({
       message: 'Subjects fetched successfully',

@@ -35,6 +35,12 @@ const subjectSchema = new mongoose.Schema(
 // Compound unique index to allow same subject name for different branches/semesters
 subjectSchema.index({ name: 1, branch: 1, semester: 1 }, { unique: true });
 
+// Additional indexes for faster filtering and sorting
+subjectSchema.index({ branch: 1, semester: 1 }); // For branch+semester queries
+subjectSchema.index({ semester: 1 }); // For semester-only queries
+subjectSchema.index({ branch: 1 }); // For branch-only queries
+subjectSchema.index({ name: 'text' }); // For text search on name
+
 const Subject = mongoose.model('Subject', subjectSchema);
 
 export default Subject;
