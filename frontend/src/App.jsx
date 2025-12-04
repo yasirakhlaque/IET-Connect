@@ -13,6 +13,8 @@ import NotFound from './pages/NotFound';
 import { createContext, useState } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 export const SignUpContext = createContext();
 export const ThemeContext = createContext("dark");
@@ -46,6 +48,10 @@ function App() {
               <Route path='*' element={<NotFound />} />
             </Routes>
           </Router>
+          {/* Vercel Analytics - Track page views and user interactions */}
+          <Analytics />
+          {/* Vercel Speed Insights - Track Web Vitals (LCP, FID, CLS) */}
+          <SpeedInsights />
         </ThemeContext.Provider>
       </SignUpContext.Provider>
     </QueryClientProvider>
