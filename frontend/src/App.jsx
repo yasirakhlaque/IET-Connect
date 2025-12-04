@@ -11,6 +11,8 @@ import Upload from './pages/Upload';
 import NotFound from './pages/NotFound';
 
 import { createContext, useState } from 'react';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient';
 
 export const SignUpContext = createContext();
 export const ThemeContext = createContext("dark");
@@ -21,30 +23,32 @@ function App() {
 
 
   return (
-    <SignUpContext.Provider value={{ isSignUpActive, setIsSignUpActive }}>
-      <ThemeContext.Provider value={{ theme, setTheme }}>
-        <Router>
-          <Routes>
-            <Route path='/' element={<LandingPage />} />
-            <Route
-              path='/login'
-              element={
-                <GuestRoute>
-                  <Login />
-                </GuestRoute>
-              }
-            />
-            <Route path='/profile' element={<Profile />} />
-            <Route path='/forgotpassword' element={<ForgotPassword />} />
-            <Route path='/download' element={<Download />} />
-            <Route path='/subject/:subjectId' element={<SubjectDetail />} />
-            <Route path='/upload' element={<Upload />} />
-            {/* 404 Catch-all route - must be last */}
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </Router>
-      </ThemeContext.Provider>
-    </SignUpContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <SignUpContext.Provider value={{ isSignUpActive, setIsSignUpActive }}>
+        <ThemeContext.Provider value={{ theme, setTheme }}>
+          <Router>
+            <Routes>
+              <Route path='/' element={<LandingPage />} />
+              <Route
+                path='/login'
+                element={
+                  <GuestRoute>
+                    <Login />
+                  </GuestRoute>
+                }
+              />
+              <Route path='/profile' element={<Profile />} />
+              <Route path='/forgotpassword' element={<ForgotPassword />} />
+              <Route path='/download' element={<Download />} />
+              <Route path='/subject/:subjectId' element={<SubjectDetail />} />
+              <Route path='/upload' element={<Upload />} />
+              {/* 404 Catch-all route - must be last */}
+              <Route path='*' element={<NotFound />} />
+            </Routes>
+          </Router>
+        </ThemeContext.Provider>
+      </SignUpContext.Provider>
+    </QueryClientProvider>
   );
 }
 
