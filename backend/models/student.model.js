@@ -32,6 +32,17 @@ const studentSchema = new mongoose.Schema(
       default: 'student',
     },
 
+    downloadHistory: [{
+      questionPaper: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'QuestionPaper',
+      },
+      downloadedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    }],
+
     resetCode: {
       type: String,
       default: null,

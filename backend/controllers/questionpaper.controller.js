@@ -1,5 +1,6 @@
 import multer from 'multer';
 import QuestionPaper from '../models/questionpaper.model.js';
+import Student from '../models/student.model.js';
 import { uploadToCloudinary, deleteFromCloudinary } from '../services/cloudinary.service.js';
 
 // Configure multer for memory storage
@@ -234,6 +235,21 @@ export const downloadQuestionPaper = async (req, res) => {
     // Increment download count
     await QuestionPaper.findByIdAndUpdate(id, { $inc: { downloads: 1 } });
 
+    // Track download history for the user
+    if (req.user && req.user.id) {
+      await Student.findByIdAndUpdate(
+        req.user.id,
+        {
+          $push: {
+            downloadHistory: {
+              questionPaper: id,
+              downloadedAt: new Date(),
+            },
+          },
+        }
+      );
+    }
+
     // Create a proper filename
     const sanitizedTitle = questionPaper.title.replace(/[^a-z0-9\s]/gi, "_").toLowerCase();
     const filename = `${sanitizedTitle}_${questionPaper.year}.pdf`;
@@ -250,6 +266,46 @@ export const downloadQuestionPaper = async (req, res) => {
     console.error("Error downloading question paper:", error);
     res.status(500).json({
       message: "Error downloading question paper",
+      error: error.message,
+    });
+  }
+};
+
+// Get user's download history
+export const getMyDownloads = async (req, res) => {
+  try {
+    const student = await Student.findById(req.user.id)
+      .populate({
+        path: 'downloadHistory.questionPaper',
+        populate: {
+          path: 'subject',
+          select: 'name code',
+        },
+      })
+      .select('downloadHistory');
+
+    if (!student) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Filter out null values (in case papers were deleted)
+    const downloads = student.downloadHistory
+      .filter(item => item.questionPaper)
+      .map(item => ({
+        id: item._id,
+        questionPaper: item.questionPaper,
+        downloadedAt: item.downloadedAt,
+      }))
+      .sort((a, b) => new Date(b.downloadedAt) - new Date(a.downloadedAt));
+
+    res.json({
+      message: 'Download history retrieved successfully',
+      downloads,
+    });
+  } catch (error) {
+    console.error('Error fetching download history:', error);
+    res.status(500).json({
+      message: 'Error fetching download history',
       error: error.message,
     });
   }

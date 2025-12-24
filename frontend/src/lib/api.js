@@ -52,6 +52,7 @@ export const questionPaperAPI = {
   },
   getById: (id) => api.get(`/questionpapers/${id}`),
   getMyUploads: () => api.get('/questionpapers/my/uploads'),
+  getMyDownloads: () => api.get('/questionpapers/my/downloads'),
 };
 
 // Subject APIs (public for users)

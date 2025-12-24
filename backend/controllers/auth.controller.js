@@ -70,6 +70,8 @@ export const login = async (req, res) => {
         name: student.name,
         email: student.email,
         rollno: student.rollno,
+        role: student.role,
+        createdAt: student.createdAt,
       },
     });
   } catch (err) {

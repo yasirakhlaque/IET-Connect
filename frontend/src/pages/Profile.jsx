@@ -31,10 +31,23 @@ export default function Profile() {
                 // Parse user data
                 if (storedUser) {
                     const userData = JSON.parse(storedUser);
+                    
+                    // If createdAt is missing, user needs to re-login to get updated data
+                    if (!userData.createdAt) {
+                        console.log("User data missing createdAt, clearing and redirecting to login...");
+                        localStorage.removeItem("token");
+                        localStorage.removeItem("user");
+                        navigate("/login");
+                        return;
+                    }
+                    
                     setUser(userData);
 
-                    // Fetch user's uploads
-                    await fetchUserUploads();
+                    // Fetch user's uploads and downloads
+                    await Promise.all([
+                        fetchUserUploads(),
+                        fetchUserDownloads()
+                    ]);
                 }
 
                 setLoading(false);
@@ -58,13 +71,14 @@ export default function Profile() {
         }
     };
 
-    // Function to fetch user downloads (TODO: Add download tracking in backend)
-    const fetchUserDownloads = async (userId) => {
+    // Function to fetch user downloads
+    const fetchUserDownloads = async () => {
         try {
-            // For now, keeping empty until download tracking is implemented
-            setDownloads([]);
+            const response = await questionPaperAPI.getMyDownloads();
+            setDownloads(response.data.downloads || []);
         } catch (error) {
             console.error("Error fetching downloads:", error);
+            setDownloads([]);
         }
     };
 
@@ -406,6 +420,25 @@ export default function Profile() {
 }
 
 function ActivityCard({ item, type, theme, getStatusColor }) {
+    // Format data based on type
+    const data = type === "download" 
+        ? {
+            title: item.questionPaper?.title || "Unknown",
+            subject: item.questionPaper?.subject?.name || "Unknown",
+            branch: item.questionPaper?.branch || "N/A",
+            semester: item.questionPaper?.semester || "N/A",
+            date: item.downloadedAt,
+            status: item.questionPaper?.approvalStatus,
+          }
+        : {
+            title: item.title,
+            subject: item.subject?.name || item.subject,
+            branch: item.branch,
+            semester: item.semester,
+            date: item.createdAt,
+            status: item.approvalStatus,
+          };
+
     return (
         <div className={`rounded-xl p-5 border transition-all hover:shadow-xl cursor-pointer relative overflow-hidden ${theme === "dark"
             ? "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:border-[#0FB8AD]/30"
@@ -417,33 +450,48 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
 
             <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="flex-1">
-                    {/* Status Badge (only for uploads) */}
-                    {type === "upload" && (
-                        <div className="mb-3">
-                            <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(item.approvalStatus)}`}>
-                                {item.approvalStatus}
+                    {/* Status Badge or Download Date */}
+                    <div className="mb-3">
+                        {type === "upload" && getStatusColor ? (
+                            <>
+                                <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(data.status)}`}>
+                                    {data.status}
+                                </span>
+                                <span className={`ml-3 text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                    {new Date(data.date).toLocaleDateString()}
+                                </span>
+                            </>
+                        ) : (
+                            <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                Downloaded on {new Date(data.date).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
                             </span>
-                            <span className={`ml-3 text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
-                                {new Date(item.createdAt).toLocaleDateString()}
-                            </span>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     <h3 className={`text-sm md:text-lg font-bold mb-2 ${theme === "dark" ? "text-white" : "text-gray-900"
                         }`}>
-                        {item.title}
+                        {data.title}
                     </h3>
 
                     <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                         }`}>
-                        {item.subject?.name || item.subject} - {item.branch} - Sem {item.semester}
+                        {data.subject} - {data.branch} - Sem {data.semester}
                     </p>
                 </div>
 
                 {/* Stats */}
-                {type === "upload" && item.approvalStatus === "Approved" && (
+                {type === "upload" && data.status === "Approved" && (
                     <div className={`font-medium text-sm ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
                         ✓ Approved
+                    </div>
+                )}
+                {type === "download" && (
+                    <div className={`font-medium text-sm ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
+                        <FaDownload className="inline mr-1" /> Downloaded
                     </div>
                 )}
             </div>

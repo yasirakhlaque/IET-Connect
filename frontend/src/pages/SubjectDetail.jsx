@@ -59,11 +59,16 @@ export default function SubjectDetail() {
 
     const handleDownload = async (paperId) => {
         try {
+            const token = localStorage.getItem('token');
             const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
             const downloadUrl = `${baseUrl}/questionpapers/${paperId}/download`;
             
-            // Fetch the download URL and filename from backend
-            const response = await fetch(downloadUrl);
+            // Fetch the download URL and filename from backend with auth token
+            const response = await fetch(downloadUrl, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             const data = await response.json();
             
             if (data.downloadUrl && data.filename) {
