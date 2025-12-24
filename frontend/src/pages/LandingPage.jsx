@@ -75,8 +75,9 @@ export default function LandingPage() {
       : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
       }`}>
       {/* Hero Section with gradient background */}
-      <div className={`min-h-screen relative overflow-hidden `}>
         <Navbar setIsSignUpActive={setIsSignUpActive} />
+      <div className={`min-h-screen relative overflow-hidden `}>
+      
 
         {/* Main Hero Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
