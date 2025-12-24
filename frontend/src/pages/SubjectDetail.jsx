@@ -18,6 +18,7 @@ export default function SubjectDetail() {
     const [subjectLoading, setSubjectLoading] = useState(true);
     const [error, setError] = useState("");
     const [likedPapers, setLikedPapers] = useState({});
+    const [downloadingPapers, setDownloadingPapers] = useState({});
 
     useEffect(() => {
         fetchSubject();
@@ -58,7 +59,15 @@ export default function SubjectDetail() {
     };
 
     const handleDownload = async (paperId) => {
+        // Prevent multiple downloads of the same paper
+        if (downloadingPapers[paperId]) {
+            return;
+        }
+
         try {
+            // Set downloading state
+            setDownloadingPapers(prev => ({ ...prev, [paperId]: true }));
+
             const token = localStorage.getItem('token');
             const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
             const downloadUrl = `${baseUrl}/questionpapers/${paperId}/download`;
@@ -99,6 +108,9 @@ export default function SubjectDetail() {
         } catch (err) {
             console.error("Error downloading:", err);
             alert("Failed to download file. Please try again.");
+        } finally {
+            // Reset downloading state
+            setDownloadingPapers(prev => ({ ...prev, [paperId]: false }));
         }
     };
 
@@ -298,6 +310,7 @@ export default function SubjectDetail() {
                                     onDownload={handleDownload}
                                     onLike={handleLike}
                                     isLiked={likedPapers[paper._id]}
+                                    isDownloading={downloadingPapers[paper._id]}
                                 />
                             ))}
                         </div>
@@ -310,9 +323,11 @@ export default function SubjectDetail() {
     );
 }
 
-function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked }) {
+function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked, isDownloading }) {
     const handleDownloadClick = () => {
-        onDownload(pyq._id);
+        if (!isDownloading) {
+            onDownload(pyq._id);
+        }
     };
 
     const handleLikeClick = () => {
@@ -433,10 +448,27 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                     {/* Action Buttons */}
                     <button
                         onClick={handleDownloadClick}
-                        className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 hover:shadow-[#0FB8AD]/30 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg hover:shadow-xl cursor-pointer"
+                        disabled={isDownloading}
+                        className={`bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white px-6 py-2 rounded-lg font-medium transition-all flex items-center gap-2 shadow-lg ${
+                            isDownloading 
+                                ? 'opacity-70 cursor-not-allowed' 
+                                : 'hover:shadow-[#0FB8AD]/30 hover:shadow-xl cursor-pointer'
+                        }`}
                     >
-                        <FaDownload className="text-sm" />
-                        Download
+                        {isDownloading ? (
+                            <>
+                                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Downloading...</span>
+                            </>
+                        ) : (
+                            <>
+                                <FaDownload className="text-sm" />
+                                <span>Download</span>
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
