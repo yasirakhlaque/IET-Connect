@@ -4,7 +4,7 @@ import { ThemeContext } from "../App";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { questionPaperAPI, subjectAPI } from "../lib/api";
-import { FaStar, FaDownload, FaArrowLeft, FaCalendar, FaFileAlt, FaBook, FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
+import { FaStar, FaDownload, FaArrowLeft, FaCalendar, FaFileAlt, FaBook } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 
 export default function SubjectDetail() {
@@ -17,7 +17,6 @@ export default function SubjectDetail() {
     const [loading, setLoading] = useState(true);
     const [subjectLoading, setSubjectLoading] = useState(true);
     const [error, setError] = useState("");
-    const [likedPapers, setLikedPapers] = useState({});
     const [downloadingPapers, setDownloadingPapers] = useState({});
 
     useEffect(() => {
@@ -114,12 +113,7 @@ export default function SubjectDetail() {
         }
     };
 
-    const handleLike = (paperId) => {
-        setLikedPapers(prev => ({
-            ...prev,
-            [paperId]: !prev[paperId]
-        }));
-    };
+    // like functionality removed — not needed
 
     // Calculate subject stats from actual papers
     const subjectStats = {
@@ -308,8 +302,6 @@ export default function SubjectDetail() {
                                     subjectName={subject.name} 
                                     subject={subject}
                                     onDownload={handleDownload}
-                                    onLike={handleLike}
-                                    isLiked={likedPapers[paper._id]}
                                     isDownloading={downloadingPapers[paper._id]}
                                 />
                             ))}
@@ -323,15 +315,11 @@ export default function SubjectDetail() {
     );
 }
 
-function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked, isDownloading }) {
+function PYQCard({ pyq, theme, subjectName, subject, onDownload, isDownloading }) {
     const handleDownloadClick = () => {
         if (!isDownloading) {
             onDownload(pyq._id);
         }
-    };
-
-    const handleLikeClick = () => {
-        onLike(pyq._id);
     };
 
     const userName = pyq.uploadedBy?.name || pyq.uploadedBy?.rollno || "Anonymous";
@@ -423,20 +411,6 @@ function PYQCard({ pyq, theme, subjectName, subject, onDownload, onLike, isLiked
                 <div className="flex flex-row md:flex-col items-center gap-4 md:gap-3 text-xs md:text-sm justify-between">
                     {/* Stats */}
                     <div className="flex gap-4 md:gap-6">
-                        <button 
-                            onClick={handleLikeClick}
-                            className="flex items-center gap-1 hover:scale-110 transition-transform"
-                        >
-                            {isLiked ? (
-                                <FaThumbsUp className="text-teal-500 text-sm" />
-                            ) : (
-                                <FaRegThumbsUp className={`text-sm ${theme === "dark" ? "text-[#9AA8B2]" : "text-gray-600"}`} />
-                            )}
-                            <span className={`font-bold ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
-                                {(pyq.likes || 0) + (isLiked ? 1 : 0)}
-                            </span>
-                        </button>
-
                         <div className="flex items-center gap-1">
                             <FaDownload className={`text-sm ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`} />
                             <span className={`font-medium ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
