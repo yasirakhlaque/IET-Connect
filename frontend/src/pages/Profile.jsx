@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
-import { FaEdit, FaMoon, FaSun, FaDownload, FaStar } from "react-icons/fa";
+import { FaEdit, FaMoon, FaSun, FaDownload, FaStar, FaLightbulb } from "react-icons/fa";
 import EditProfileForm from "../components/EditProfileForm";
-import { questionPaperAPI } from "../lib/api";
+import { questionPaperAPI, featureRequestAPI } from "../lib/api";
 
 export default function Profile() {
     const { theme } = useContext(ThemeContext);
@@ -15,6 +15,7 @@ export default function Profile() {
     const [user, setUser] = useState(null);
     const [uploads, setUploads] = useState([]);
     const [downloads, setDownloads] = useState([]);
+    const [featureRequests, setFeatureRequests] = useState([]);
     const [showAddEditProfileForm, setShowAddEditProfileForm] = useState(false);
 
     useEffect(() => {
@@ -46,7 +47,8 @@ export default function Profile() {
                     // Fetch user's uploads and downloads
                     await Promise.all([
                         fetchUserUploads(),
-                        fetchUserDownloads()
+                        fetchUserDownloads(),
+                        fetchUserFeatureRequests()
                     ]);
                 }
 
@@ -79,6 +81,17 @@ export default function Profile() {
         } catch (error) {
             console.error("Error fetching downloads:", error);
             setDownloads([]);
+        }
+    };
+
+    // Function to fetch user feature requests
+    const fetchUserFeatureRequests = async () => {
+        try {
+            const response = await featureRequestAPI.getMyRequests();
+            setFeatureRequests(response.data.featureRequests || []);
+        } catch (error) {
+            console.error("Error fetching feature requests:", error);
+            setFeatureRequests([]);
         }
     };
 
@@ -292,6 +305,20 @@ export default function Profile() {
                             >
                                 Download History
                             </button>
+                            <button
+                                onClick={() => setActiveTab("requests")}
+                                className={`pb-3 px-4 font-semibold transition-all flex items-center gap-1 ${activeTab === "requests"
+                                    ? theme === "dark"
+                                        ? "text-[#0FB8AD] border-b-2 border-teal-400"
+                                        : "text-teal-600 border-b-2 border-teal-600"
+                                    : theme === "dark"
+                                        ? "text-gray-400 hover:text-gray-300"
+                                        : "text-gray-600 hover:text-gray-900"
+                                    }`}
+                            >
+                                <FaLightbulb className="text-xs" />
+                                Feature Requests
+                            </button>
                         </div>
 
                         {/* Stats Overview */}
@@ -302,11 +329,15 @@ export default function Profile() {
                                 }`}>
                                 <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"
                                     }`}>
-                                    {activeTab === "uploads" ? uploads.filter(u => u.approvalStatus === "Approved").length : downloads.length}
+                                    {activeTab === "uploads" 
+                                        ? uploads.filter(u => u.approvalStatus === "Approved").length 
+                                        : activeTab === "downloads" 
+                                        ? downloads.length 
+                                        : featureRequests.filter(r => r.status === "approved" || r.status === "implemented").length}
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                     }`}>
-                                    {activeTab === "uploads" ? "Approved" : "Downloaded"}
+                                    {activeTab === "uploads" ? "Approved" : activeTab === "downloads" ? "Downloaded" : "Approved"}
                                 </div>
                             </div>
 
@@ -326,6 +357,22 @@ export default function Profile() {
                                 </div>
                             )}
 
+                            {activeTab === "requests" && (
+                                <div className={`rounded-xl p-4 text-center ${theme === "dark"
+                                    ? "bg-white/[0.03] border border-white/[0.08]"
+                                    : "bg-white border border-gray-200 shadow-sm"
+                                    }`}>
+                                    <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-yellow-400" : "text-yellow-600"
+                                        }`}>
+                                        {featureRequests.filter(r => r.status === "pending" || r.status === "under-review").length}
+                                    </div>
+                                    <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                                        }`}>
+                                        In Progress
+                                    </div>
+                                </div>
+                            )}
+
                             <div className={`rounded-xl p-4 text-center ${theme === "dark"
                                 ? "bg-white/[0.03] border border-white/[0.08]"
                                 : "bg-white border border-gray-200 shadow-sm"
@@ -334,12 +381,14 @@ export default function Profile() {
                                     }`}>
                                     {activeTab === "uploads"
                                         ? uploads.length
-                                        : "0"
+                                        : activeTab === "downloads"
+                                        ? downloads.length
+                                        : featureRequests.length
                                     }
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                     }`}>
-                                    Total {activeTab === "uploads" ? "Uploads" : "Downloads"}
+                                    Total {activeTab === "uploads" ? "Uploads" : activeTab === "downloads" ? "Downloads" : "Requests"}
                                 </div>
                             </div>
                         </div>
@@ -376,7 +425,7 @@ export default function Profile() {
                                         </button>
                                     </div>
                                 )
-                            ) : (
+                            ) : activeTab === "downloads" ? (
                                 downloads.length > 0 ? (
                                     downloads.map((download) => (
                                         <ActivityCard
@@ -401,7 +450,37 @@ export default function Profile() {
                                             onClick={() => navigate('/download')}
                                             className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
-                                            Browse Library
+                                            Browse PYQs
+                                        </button>
+                                    </div>
+                                )
+                            ) : (
+                                featureRequests.length > 0 ? (
+                                    featureRequests.map((request) => (
+                                        <ActivityCard
+                                            key={request._id}
+                                            item={request}
+                                            type="featureRequest"
+                                            theme={theme}
+                                            getStatusColor={getStatusColor}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className={`text-center py-12 rounded-xl ${theme === "dark"
+                                        ? "bg-white/[0.03] border border-white/[0.08]"
+                                        : "bg-white border border-gray-200"
+                                        }`}>
+                                        <p className={`text-lg ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                            No feature requests yet
+                                        </p>
+                                        <p className={`text-sm mt-2 ${theme === "dark" ? "text-gray-500" : "text-gray-500"}`}>
+                                            Have an idea? Share your feature requests with us!
+                                        </p>
+                                        <button
+                                            onClick={() => navigate('/request-feature')}
+                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
+                                        >
+                                            Request a Feature
                                         </button>
                                     </div>
                                 )
@@ -429,6 +508,14 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
             semester: item.questionPaper?.semester || "N/A",
             date: item.downloadedAt,
             status: item.questionPaper?.approvalStatus,
+          }
+        : type === "featureRequest"
+        ? {
+            title: item.featureTitle,
+            category: item.category,
+            description: item.description,
+            date: item.createdAt,
+            status: item.status,
           }
         : {
             title: item.title,
@@ -461,6 +548,18 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                                     {new Date(data.date).toLocaleDateString()}
                                 </span>
                             </>
+                        ) : type === "featureRequest" && getStatusColor ? (
+                            <>
+                                <span className={`px-3 py-1 rounded-lg text-xs font-medium border ${getStatusColor(data.status)}`}>
+                                    {data.status}
+                                </span>
+                                <span className={`ml-3 px-2 py-1 rounded text-xs font-medium ${theme === "dark" ? "bg-purple-500/20 text-purple-300" : "bg-purple-100 text-purple-700"}`}>
+                                    {data.category}
+                                </span>
+                                <span className={`ml-3 text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
+                                    {new Date(data.date).toLocaleDateString()}
+                                </span>
+                            </>
                         ) : (
                             <span className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}>
                                 Downloaded on {new Date(data.date).toLocaleDateString('en-US', {
@@ -477,10 +576,17 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                         {data.title}
                     </h3>
 
-                    <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
-                        }`}>
-                        {data.subject} - {data.branch} - Sem {data.semester}
-                    </p>
+                    {type === "featureRequest" ? (
+                        <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                            }`}>
+                            {data.description?.length > 100 ? `${data.description.substring(0, 100)}...` : data.description}
+                        </p>
+                    ) : (
+                        <p className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                            }`}>
+                            {data.subject} - {data.branch} - Sem {data.semester}
+                        </p>
+                    )}
                 </div>
 
                 {/* Stats */}
@@ -492,6 +598,16 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                 {type === "download" && (
                     <div className={`font-medium text-sm ${theme === "dark" ? "text-blue-400" : "text-blue-600"}`}>
                         <FaDownload className="inline mr-1" /> Downloaded
+                    </div>
+                )}
+                {type === "featureRequest" && (
+                    <div className="flex items-center gap-2">
+                        <FaLightbulb className={`${theme === "dark" ? "text-yellow-400" : "text-yellow-600"}`} />
+                        {(data.status === "approved" || data.status === "implemented") && (
+                            <span className={`font-medium text-sm ${theme === "dark" ? "text-green-400" : "text-green-600"}`}>
+                                ✓ {data.status === "implemented" ? "Implemented" : "Approved"}
+                            </span>
+                        )}
                     </div>
                 )}
             </div>

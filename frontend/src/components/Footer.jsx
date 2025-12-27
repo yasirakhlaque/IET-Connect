@@ -37,6 +37,15 @@ export default function Footer() {
                         >
                             Browse
                         </Link>
+                        <Link
+                            to="/request-feature"
+                            className={`text-sm transition-colors ${theme === "dark"
+                                ? "text-gray-400 hover:text-[#0FB8AD]"
+                                : "text-gray-600 hover:text-teal-600"
+                                }`}
+                        >
+                            Request a Feature
+                        </Link>
                         <a
                             href="mailto:support@ietconnect.edu"
                             className={`text-sm transition-colors ${theme === "dark"

@@ -64,4 +64,11 @@ export const subjectAPI = {
   getById: (id) => api.get(`/subjects/${id}`),
 };
 
+// Feature Request APIs (Student side only)
+// Admin management APIs are on the separate admin backend
+export const featureRequestAPI = {
+  create: (data) => api.post('/feature-requests', data),
+  getMyRequests: () => api.get('/feature-requests/my-requests'),
+};
+
 export default api;
