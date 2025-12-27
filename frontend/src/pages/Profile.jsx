@@ -131,6 +131,7 @@ export default function Profile() {
 
     const getStatusColor = (status) => {
         switch (status) {
+            case "Approved":
             case "approved":
                 return theme === "dark"
                     ? "bg-green-500/20 text-green-300 border-green-500/30"
@@ -139,7 +140,13 @@ export default function Profile() {
                 return "bg-blue-500/20 text-blue-400 border-blue-500/30";
             case 'under-review':
                 return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+                case "pending":
+            case "Pending":
+                return theme === "dark"
+                    ? "bg-yellow-500/20 text-yellow-300 border-yellow-500/30"
+                    : "bg-yellow-100 text-yellow-700 border-yellow-200";
             case "rejected":
+            case "Rejected":
                 return theme === "dark"
                     ? "bg-red-500/20 text-red-300 border-red-500/30"
                     : "bg-red-100 text-red-700 border-red-200";
