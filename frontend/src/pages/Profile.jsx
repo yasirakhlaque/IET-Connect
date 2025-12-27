@@ -32,7 +32,7 @@ export default function Profile() {
                 // Parse user data
                 if (storedUser) {
                     const userData = JSON.parse(storedUser);
-                    
+
                     // If createdAt is missing, user needs to re-login to get updated data
                     if (!userData.createdAt) {
                         console.log("User data missing createdAt, clearing and redirecting to login...");
@@ -41,7 +41,7 @@ export default function Profile() {
                         navigate("/login");
                         return;
                     }
-                    
+
                     setUser(userData);
 
                     // Fetch user's uploads and downloads
@@ -105,8 +105,8 @@ export default function Profile() {
     if (loading) {
         return (
             <div className={`min-h-screen flex items-center justify-center ${theme === "dark"
-                ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
+                ? "bg-[#0B1220]"
+                : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
                 }`}>
                 <div className={`text-xl ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                     Loading...
@@ -118,9 +118,9 @@ export default function Profile() {
     // Show error if user data not found
     if (!user) {
         return (
-            <div className={`min-h-screen flex items-center justify-center ${theme === "dark"
-                ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-                : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
+            <div className={`${theme === "dark"
+                ? "bg-[#0B1220]"
+                : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
                 }`}>
                 <div className={`text-xl ${theme === "dark" ? "text-white" : "text-gray-900"}`}>
                     User not found. <button onClick={() => navigate("/login")} className="text-teal-500 underline">Login</button>
@@ -161,8 +161,8 @@ export default function Profile() {
 
     return (
         <div className={`${theme === "dark"
-            ? "bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#312e81]"
-            : "bg-gradient-to-br from-white via-blue-200 to-teal-100"
+            ? "bg-[#0B1220]"
+            : "bg-gradient-to-br from-white via-blue-50 to-teal-50"
             }`}>
             <Navbar />
 
@@ -255,7 +255,7 @@ export default function Profile() {
                                     <button className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium transition-all ${theme === "dark"
                                         ? "bg-white/10 hover:bg-white/15 text-white border border-white/20"
                                         : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
-                                    }`} onClick={() => setShowAddEditProfileForm(true)}>
+                                        }`} onClick={() => setShowAddEditProfileForm(true)}>
                                         <FaEdit />
                                         Edit Profile
                                     </button>
@@ -326,11 +326,11 @@ export default function Profile() {
                                 }`}>
                                 <div className={`text-xl md:text-3xl font-bold mb-1 ${theme === "dark" ? "text-[#0FB8AD]" : "text-teal-600"
                                     }`}>
-                                    {activeTab === "uploads" 
-                                        ? uploads.filter(u => u.approvalStatus === "Approved").length 
-                                        : activeTab === "downloads" 
-                                        ? downloads.length 
-                                        : featureRequests.filter(r => r.status === "approved" || r.status === "implemented").length}
+                                    {activeTab === "uploads"
+                                        ? uploads.filter(u => u.approvalStatus === "Approved").length
+                                        : activeTab === "downloads"
+                                            ? downloads.length
+                                            : featureRequests.filter(r => r.status === "approved" || r.status === "implemented").length}
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
                                     }`}>
@@ -379,8 +379,8 @@ export default function Profile() {
                                     {activeTab === "uploads"
                                         ? uploads.length
                                         : activeTab === "downloads"
-                                        ? downloads.length
-                                        : featureRequests.length
+                                            ? downloads.length
+                                            : featureRequests.length
                                     }
                                 </div>
                                 <div className={`text-xs md:text-sm ${theme === "dark" ? "text-gray-400" : "text-gray-600"
@@ -497,7 +497,7 @@ export default function Profile() {
 
 function ActivityCard({ item, type, theme, getStatusColor }) {
     // Format data based on type
-    const data = type === "download" 
+    const data = type === "download"
         ? {
             title: item.questionPaper?.title || "Unknown",
             subject: item.questionPaper?.subject?.name || "Unknown",
@@ -505,23 +505,23 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
             semester: item.questionPaper?.semester || "N/A",
             date: item.downloadedAt,
             status: item.questionPaper?.approvalStatus,
-          }
+        }
         : type === "featureRequest"
-        ? {
-            title: item.featureTitle,
-            category: item.category,
-            description: item.description,
-            date: item.createdAt,
-            status: item.status,
-          }
-        : {
-            title: item.title,
-            subject: item.subject?.name || item.subject,
-            branch: item.branch,
-            semester: item.semester,
-            date: item.createdAt,
-            status: item.approvalStatus,
-          };
+            ? {
+                title: item.featureTitle,
+                category: item.category,
+                description: item.description,
+                date: item.createdAt,
+                status: item.status,
+            }
+            : {
+                title: item.title,
+                subject: item.subject?.name || item.subject,
+                branch: item.branch,
+                semester: item.semester,
+                date: item.createdAt,
+                status: item.approvalStatus,
+            };
 
     return (
         <div className={`rounded-xl p-5 border transition-all hover:shadow-xl cursor-pointer relative overflow-hidden ${theme === "dark"
