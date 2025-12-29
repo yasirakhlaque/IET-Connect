@@ -59,13 +59,13 @@ export default function Navbar({ setIsSignUpActive }) {
                 {isLoggedIn ? (
                   <>
                     <Link to="/profile">
-                      <button className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all">
+                      <button className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all cursor-pointer">
                         Profile
                       </button>
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className={`px-5 py-2 rounded-full font-medium transition-all
+                      className={`px-5 py-2 rounded-full font-medium transition-all cursor-pointer
                         ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : ''}
                         ${theme === "dark"
                         ? "bg-red-500/20 text-red-400 hover:bg-red-500/30"
@@ -80,7 +80,7 @@ export default function Navbar({ setIsSignUpActive }) {
                     <Link to="/login">
                       <button
                         onClick={() => setIsSignUpActive(false)}
-                        className={`px-5 py-2 rounded-full font-medium transition-all ${theme === "dark"
+                        className={`px-5 py-2 rounded-full font-medium transition-all cursor-pointer ${theme === "dark"
                           ? "text-[#0FB8AD] hover:bg-[#0FB8AD]/10"
                           : "text-teal-700 hover:bg-teal-50"
                           }`}
@@ -91,7 +91,7 @@ export default function Navbar({ setIsSignUpActive }) {
                     <Link to="/login">
                       <button
                         onClick={() => setIsSignUpActive(true)}
-                        className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all"
+                        className="bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 px-5 py-2 rounded-full text-white font-medium hover:shadow-lg transition-all cursor-pointer"
                       >
                         Sign Up
                       </button>

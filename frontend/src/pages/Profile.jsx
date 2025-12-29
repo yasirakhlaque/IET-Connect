@@ -259,7 +259,7 @@ export default function Profile() {
 
                                 {/* Action Buttons */}
                                 <div className="space-y-3 text-xs md:text-sm">
-                                    <button className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium transition-all ${theme === "dark"
+                                    <button className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-lg font-medium transition-all cursor-pointer ${theme === "dark"
                                         ? "bg-white/10 hover:bg-white/15 text-white border border-white/20"
                                         : "bg-gray-100 hover:bg-gray-200 text-gray-900 border border-gray-200"
                                         }`} onClick={() => setShowAddEditProfileForm(true)}>
@@ -269,7 +269,7 @@ export default function Profile() {
 
                                     <button
                                         onClick={handleLogout}
-                                        className="w-full py-2.5 rounded-lg font-medium transition-all bg-red-500 hover:bg-red-600 text-white"
+                                        className="w-full py-2.5 rounded-lg font-medium transition-all bg-red-500 hover:bg-red-600 text-white cursor-pointer"
                                     >
                                         Logout
                                     </button>
@@ -285,7 +285,7 @@ export default function Profile() {
                             }`}>
                             <button
                                 onClick={() => setActiveTab("uploads")}
-                                className={`pb-3 px-4 font-semibold transition-all ${activeTab === "uploads"
+                                className={`cursor-pointer pb-3 px-4 font-semibold transition-all ${activeTab === "uploads"
                                     ? theme === "dark"
                                         ? "text-[#0FB8AD] border-b-2 border-teal-400"
                                         : "text-teal-600 border-b-2 border-teal-600"
@@ -298,7 +298,7 @@ export default function Profile() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("downloads")}
-                                className={`pb-3 px-4 font-semibold transition-all ${activeTab === "downloads"
+                                className={`cursor-pointer pb-3 px-4 font-semibold transition-all ${activeTab === "downloads"
                                     ? theme === "dark"
                                         ? "text-[#0FB8AD] border-b-2 border-teal-400"
                                         : "text-teal-600 border-b-2 border-teal-600"
@@ -311,7 +311,7 @@ export default function Profile() {
                             </button>
                             <button
                                 onClick={() => setActiveTab("requests")}
-                                className={`pb-3 px-4 font-semibold transition-all flex items-center gap-1 ${activeTab === "requests"
+                                className={`cursor-pointer pb-3 px-4 font-semibold transition-all flex items-center gap-1 ${activeTab === "requests"
                                     ? theme === "dark"
                                         ? "text-[#0FB8AD] border-b-2 border-teal-400"
                                         : "text-teal-600 border-b-2 border-teal-600"
@@ -423,7 +423,7 @@ export default function Profile() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/upload')}
-                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
+                                            className="cursor-pointer mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
                                             Upload Now
                                         </button>
@@ -452,7 +452,7 @@ export default function Profile() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/download')}
-                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
+                                            className="cursor-pointer mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
                                             Browse PYQs
                                         </button>
@@ -482,7 +482,7 @@ export default function Profile() {
                                         </p>
                                         <button
                                             onClick={() => navigate('/request-feature')}
-                                            className="mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
+                                            className="cursor-pointer mt-4 px-6 py-2 bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white rounded-lg hover:shadow-[#0FB8AD]/30 transition"
                                         >
                                             Request a Feature
                                         </button>

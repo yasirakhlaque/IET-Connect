@@ -17,7 +17,7 @@ export default function ResultsInfo({
                 {userPreferences && (
                     <button
                         onClick={handleResetPreferences}
-                        className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${
+                        className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                             theme === "dark"
                                 ? "bg-[#0FB8AD]/10 text-[#0FB8AD] hover:bg-[#0FB8AD]/20 border border-[#0FB8AD]/20"
                                 : "bg-teal-50 text-teal-600 hover:bg-teal-100 border border-teal-200"

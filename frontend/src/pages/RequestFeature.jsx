@@ -253,7 +253,7 @@ export default function RequestFeature() {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className={`w-full bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white px-6 py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${loading
+                                    className={`cursor-pointer w-full bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-white px-6 py-4 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${loading
                                         ? "opacity-70 cursor-not-allowed"
                                         : "hover:shadow-xl hover:shadow-[#0FB8AD]/30"
                                         }`}

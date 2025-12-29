@@ -94,7 +94,7 @@ export default function EditProfileForm({ onClose }) {
                     theme === "dark" ? "border-white/10" : "border-gray-200"
                 }`}>
                     <button
-                        className={`absolute top-4 right-4 p-2 rounded-full transition-all ${
+                        className={`cursor-pointer absolute top-4 right-4 p-2 rounded-full transition-all ${
                             theme === "dark" 
                                 ? "bg-white/5 hover:bg-white/10 text-gray-300" 
                                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"
@@ -259,7 +259,7 @@ export default function EditProfileForm({ onClose }) {
                         <div className="flex gap-3 pt-4">
                             <button 
                                 type="button"
-                                className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                                className={`cursor-pointer flex-1 py-3 rounded-xl font-semibold transition-all ${
                                     theme === "dark" 
                                         ? "bg-white/5 hover:bg-white/10 text-gray-300 border border-white/10" 
                                         : "bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-200"
@@ -271,7 +271,7 @@ export default function EditProfileForm({ onClose }) {
                             </button>
                             <button 
                                 type="submit" 
-                                className={`flex-1 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
+                                className={`cursor-pointer flex-1 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                                     saving
                                         ? "opacity-70 cursor-not-allowed"
                                         : "hover:shadow-xl hover:shadow-teal-500/30 hover:scale-[1.02]"

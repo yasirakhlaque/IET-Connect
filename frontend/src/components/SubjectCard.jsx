@@ -66,7 +66,7 @@ export default function SubjectCard({ subject, index }) {
 
             {/* Footer: Action Button */}
             <Link to={`/subject/${subject._id}`} className="mt-2">
-                <button className='group/btn relative flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/90 py-3 text-sm font-bold text-white shadow-lg shadow-teal-500/20 transition-all hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-95'>
+                <button className='group/btn relative flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/90 py-3 text-sm font-bold text-white shadow-lg shadow-teal-500/20 transition-all hover:shadow-teal-500/40 hover:scale-[1.02] active:scale-95 cursor-pointer'>
                     <FiBookOpen className="text-lg transition-transform group-hover/btn:-rotate-12" />
                     <span>View Materials</span>
                     
