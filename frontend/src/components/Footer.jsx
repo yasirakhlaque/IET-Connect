@@ -29,6 +29,15 @@ export default function Footer() {
                             Home
                         </Link>
                         <Link
+                            to="/about"
+                            className={`text-sm transition-colors ${theme === "dark"
+                                ? "text-gray-400 hover:text-[#0FB8AD]"
+                                : "text-gray-600 hover:text-teal-600"
+                                }`}
+                        >
+                            About
+                        </Link>
+                        <Link
                             to="/download"
                             className={`text-sm transition-colors ${theme === "dark"
                                 ? "text-gray-400 hover:text-[#0FB8AD]"

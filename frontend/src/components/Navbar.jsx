@@ -22,6 +22,7 @@ export default function Navbar({ setIsSignUpActive }) {
   const NavOpt = [
     { name: "Upload", link: "/upload" },
     { name: "Download", link: "/download" },
+    { name: "About", link: "/about" },
   ];
 
   return (

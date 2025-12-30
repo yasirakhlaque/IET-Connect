@@ -9,6 +9,7 @@ import SubjectDetail from './pages/SubjectDetail';
 import GuestRoute from './components/GuestRoute';
 import Upload from './pages/Upload';
 import RequestFeature from './pages/RequestFeature';
+import About from './pages/About';
 import NotFound from './pages/NotFound';
 
 import { createContext, useState } from 'react';
@@ -46,6 +47,7 @@ function App() {
               <Route path='/subject/:subjectId' element={<SubjectDetail />} />
               <Route path='/upload' element={<Upload />} />
               <Route path='/request-feature' element={<RequestFeature />} />
+              <Route path='/about' element={<About />} />
               {/* 404 Catch-all route - must be last */}
               <Route path='*' element={<NotFound />} />
             </Routes>
