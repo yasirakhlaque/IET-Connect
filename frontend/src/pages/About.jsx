@@ -2,7 +2,9 @@ import { useContext } from "react";
 import { ThemeContext } from "../App";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { FaGithub, FaLinkedin, FaTwitter, FaCode, FaLightbulb, FaPalette, FaGraduationCap, FaUniversity, FaRocket, FaUsers, FaHeart } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaGraduationCap, FaRocket, FaUsers, FaHeart } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
 
 export default function About() {
     const { theme } = useContext(ThemeContext);
@@ -11,7 +13,7 @@ export default function About() {
         {
             name: "Dev Anand",
             role: "Visionary & Idea Creator",
-            image: "/team/dev-anand.jpg",
+            image: "/team/dev-anand-sir.jpg",
             iconColor: theme === "dark" ? "text-yellow-400" : "text-yellow-600",
             bgGradient: theme === "dark" 
                 ? "from-yellow-900/40 to-orange-900/40 border-yellow-700/50" 
@@ -20,6 +22,11 @@ export default function About() {
             education: "Researcher at IIT Bombay",
             badge: "Alumni of DBRAU",
             achievement: "Currently working at IIT Bombay as a researcher, Dev brings invaluable insights from his journey.",
+            social: {
+                github: "https://github.com/heydevanand",
+                linkedin: "https://www.linkedin.com/in/heydevanand/",
+                twitter: "https://x.com/heydevanand"
+            }
         },
         {
             name: "Yasir Akhlaque",
@@ -34,9 +41,9 @@ export default function About() {
             badge: "Full-Stack Developer",
             achievement: "Passionate about creating impactful solutions that help students succeed academically.",
             social: {
-                github: "#",
-                linkedin: "#",
-                twitter: "#"
+                github: "https://github.com/yasirakhlaque",
+                linkedin: "https://www.linkedin.com/in/yasirakhlaque",
+                twitter: "https://x.com/___Yas_bytes_"
             }
         }
     ];
@@ -236,17 +243,17 @@ export default function About() {
                                             </a>
                                             <a href={member.social.linkedin} className={`p-2 rounded-lg transition-all ${
                                                 theme === "dark" 
-                                                    ? "bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white" 
-                                                    : "bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
+                                                    ? "bg-white/5 hover:bg-white/10 text-gray-400 hover:text-blue-500" 
+                                                    : "bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-blue-900"
                                             }`}>
                                                 <FaLinkedin size={20} />
                                             </a>
                                             <a href={member.social.twitter} className={`p-2 rounded-lg transition-all ${
                                                 theme === "dark" 
-                                                    ? "bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white" 
+                                                    ? "bg-white/5 hover:bg-white/10 text-gray-400 hover:text-gray-900" 
                                                     : "bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900"
                                             }`}>
-                                                <FaTwitter size={20} />
+                                                <FaXTwitter size={20} />
                                             </a>
                                         </div>
                                     )}
