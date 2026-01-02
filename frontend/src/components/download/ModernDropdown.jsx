@@ -16,7 +16,7 @@ export default function ModernDropdown({ options, value, onChange, placeholder, 
     }, []);
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative z-50" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl font-medium transition-all min-w-[120px] md:min-w-[160px] ${
@@ -37,7 +37,7 @@ export default function ModernDropdown({ options, value, onChange, placeholder, 
 
             {isOpen && (
                 <div
-                    className={`absolute top-full left-0 right-0 mt-2 rounded-xl overflow-hidden shadow-xl border z-50 ${
+                    className={`absolute top-full left-0 right-0 mt-2 rounded-xl overflow-hidden shadow-xl border z-[100] ${
                         theme === "dark"
                             ? "bg-[#1e293b] border-white/10 backdrop-blur-xl"
                             : "bg-white border-gray-200"

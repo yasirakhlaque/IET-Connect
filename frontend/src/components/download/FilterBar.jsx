@@ -13,7 +13,7 @@ export default function FilterBar({
     theme 
 }) {
     return (
-        <div className={`w-full rounded-2xl p-4 flex flex-col lg:flex-row items-stretch lg:items-center gap-3 border ${
+        <div className={`relative z-50 w-full rounded-2xl p-4 flex flex-col lg:flex-row items-stretch lg:items-center gap-3 border ${
             theme === "dark" 
                 ? "border-white/10 bg-white/[0.02] backdrop-blur-lg" 
                 : "border-gray-200 bg-white/60 shadow-lg"
