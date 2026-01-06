@@ -13,6 +13,7 @@ export default function Login() {
   const { isSignUpActive, setIsSignUpActive } = useContext(SignUpContext);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [generalError, setGeneralError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -47,8 +48,22 @@ export default function Login() {
     e.preventDefault();
     setEmailError(false);
     setPasswordError(false);
+    setGeneralError('');
     setSuccessMessage('');
+    
+    // Frontend validation
+    if (!state.email.trim()) {
+      setEmailError(true);
+      return;
+    }
+    
+    if (!state.password.trim()) {
+      setPasswordError(true);
+      return;
+    }
+    
     setIsLoggingIn(true);
+    
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
       const response = await axios.post(`${API_URL}/auth/login`, state);
@@ -58,15 +73,42 @@ export default function Login() {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.student));
         setTimeout(() => navigate('/profile'), 1500);
-      } else {
-        setEmailError(true);
       }
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setEmailError(true);
-        setPasswordError(true);
+      if (error.response) {
+        // Server responded with error
+        if (error.response.status === 400) {
+          const message = error.response.data.message || 'Invalid credentials';
+          
+          // Check if it's a validation error (missing fields)
+          if (message.includes('required') || message.includes('Required')) {
+            if (message.toLowerCase().includes('email')) {
+              setEmailError(true);
+            }
+            if (message.toLowerCase().includes('password')) {
+              setPasswordError(true);
+            }
+            if (!message.toLowerCase().includes('email') && !message.toLowerCase().includes('password')) {
+              setGeneralError(message);
+            }
+          } else if (message.includes('Email') || message.includes('email not found')) {
+            setEmailError(true);
+          } else if (message.includes('password') || message.includes('credentials')) {
+            // Show password error for invalid credentials
+            setPasswordError(true);
+          } else {
+            // Generic 400 error
+            setGeneralError(message);
+          }
+        } else if (error.response.status === 500) {
+          setGeneralError('⚠️ Server error. Please try again later.');
+        }
+      } else if (error.request) {
+        // Network error - no response from server
+        setGeneralError('⚠️ Network Error: Unable to connect to server. Please check your internet connection.');
       } else {
-        console.error(error.message);
+        // Something else happened
+        setGeneralError('⚠️ An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoggingIn(false);
@@ -198,7 +240,7 @@ export default function Login() {
                         onChange={handleChange}
                       />
                     </div>
-                    {emailError && <p className='text-red-400 text-sm mt-1'>Email not found.</p>}
+                    {emailError && <p className='text-red-400 text-sm mt-1'>{!state.email.trim() ? '⚠️ Email is required.' : 'Email not found or invalid.'}</p>}
                   </div>
 
                   <div>
@@ -218,10 +260,16 @@ export default function Login() {
                         value={state.password}
                         onChange={handleChange}
                       />
-                      {showPassword ? <FaEye onClick={() => setShowPassword(false)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} /> : <IoMdEyeOff onClick={() => setShowPassword(true)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />}
+                      {showPassword ? <FaEye onClick={() => setShowPassword(false)} className={theme === "dark" ? "text-gray-300 mr-2 cursor-pointer" : "text-gray-600 mr-2 cursor-pointer"} /> : <IoMdEyeOff onClick={() => setShowPassword(true)} className={theme === "dark" ? "text-gray-300 mr-2 cursor-pointer" : "text-gray-600 mr-2 cursor-pointer"} />}
                     </div>
-                    {passwordError && <p className='text-red-400 text-sm mt-1'>Incorrect password.</p>}
+                    {passwordError && <p className='text-red-400 text-sm mt-1'>{!state.password.trim() ? '⚠️ Password is required.' : 'Incorrect password or invalid credentials.'}</p>}
                   </div>
+
+                  {generalError && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center py-2 px-3 rounded-lg">
+                      {generalError}
+                    </div>
+                  )}
 
                   {successMessage && (
                     <div className="text-green-400 text-sm text-center">{successMessage}</div>
@@ -234,7 +282,7 @@ export default function Login() {
                     <Link to={"/forgotpassword"}>Forgot Password?</Link>
                   </div>
 
-                  <button type="submit" className={`text-xs md:text-sm ${theme === "dark" 
+                  <button type="submit" disabled={isLoggingIn} className={`text-xs md:text-sm ${theme === "dark" 
                     ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] hover:shadow-lg hover:shadow-[#0FB8AD]/30"
                     : "bg-gradient-to-r from-teal-600 to-teal-500 text-white hover:from-teal-700 hover:to-teal-600"
                   } py-2.5 rounded-lg font-semibold transition shadow-lg ${isLoggingIn ? 'opacity-50 cursor-not-allowed' : ''}`}>

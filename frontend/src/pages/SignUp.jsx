@@ -13,6 +13,7 @@ export default function SignUp({ setIsSignUpActive }) {
     const [rollnoError, setRollnoError] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [studentExist, setStudentExist] = useState(false);
+    const [generalError, setGeneralError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isSigningUp, setIsSigningUp] = useState(false);
@@ -92,10 +93,13 @@ export default function SignUp({ setIsSignUpActive }) {
         e.preventDefault();
         setIsSigningUp(true);
         setStudentExist(false);
+        setGeneralError('');
+        
         try {
             if (validate()) {
                 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
                 const response = await axios.post(`${API_URL}/auth/signup`, state);
+                
                 // Signup successful
                 dispatch({ type: "RESET" });
                 setSubmitted(true);
@@ -106,7 +110,24 @@ export default function SignUp({ setIsSignUpActive }) {
                 setIsSigningUp(false);
             }
         } catch (error) {
-            setStudentExist(true);
+            if (error.response) {
+                // Server responded with error
+                if (error.response.status === 400) {
+                    const message = error.response.data.message || '';
+                    if (message.includes('already exists') || message.includes('exist')) {
+                        setStudentExist(true);
+                    } else {
+                        setGeneralError(message || 'Signup failed. Please check your details.');
+                    }
+                } else if (error.response.status === 500) {
+                    setGeneralError('⚠️ Server error. Please try again later.');
+                }
+            } else if (error.request) {
+                // Network error
+                setGeneralError('⚠️ Network Error: Unable to connect to server. Please check your internet connection.');
+            } else {
+                setGeneralError('⚠️ An unexpected error occurred. Please try again.');
+            }
             console.error('Signup failed:', error.response?.data || error.message);
         } finally {
             setIsSigningUp(false);
@@ -217,12 +238,18 @@ export default function SignUp({ setIsSignUpActive }) {
                 <button className={`${theme === "dark"
                     ? "bg-gradient-to-r from-[#0FB8AD] to-[#0FB8AD]/80 text-[#0B1220] hover:shadow-xl hover:shadow-[#0FB8AD]/30"
                     : "bg-gradient-to-r from-teal-600 to-teal-500 text-white hover:from-teal-700 hover:to-teal-600"
-                  } py-2.5 rounded-lg font-semibold transition shadow-lg text-xs md:text-sm ${isSigningUp ? 'opacity-50 cursor-not-allowed' : ''}`} type="submit">
+                  } py-2.5 rounded-lg font-semibold transition shadow-lg text-xs md:text-sm ${isSigningUp ? 'opacity-50 cursor-not-allowed' : ''}`} type="submit" disabled={isSigningUp}>
                    {isSigningUp ? 'Signing Up...' : 'Sign Up'}
                 </button>
 
-                {submitted && <p className="text-green-400 text-center text-sm">Account created successfully!</p>}
-                {studentExist && <p className="text-red-400 text-sm text-center">Student already exists with this Roll Number or Email.</p>}
+                {submitted && <p className="text-green-400 text-center text-sm">🎉 Account created successfully! Redirecting...</p>}
+                {studentExist && <p className="text-red-400 text-sm text-center">⚠️ Student already exists with this Roll Number or Email.</p>}
+                {generalError && (
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center py-2 px-3 rounded-lg">
+                        {generalError}
+                    </div>
+                )}
+                
                 <p className={`text-sm text-center ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
                     Already Have an account? <span className={`cursor-pointer font-medium transition ${theme === "dark"
                         ? "text-[#0FB8AD] hover:text-[#0FB8AD]/80"

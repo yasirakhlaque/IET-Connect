@@ -11,6 +11,7 @@ export default function ForgotPassword() {
     const { theme } = useContext(ThemeContext);
     const navigate = useNavigate();
     const [emailError, setEmailError] = useState(false);
+    const [generalError, setGeneralError] = useState('');
     const [email, setEmail] = useState("");
     const [otpPage, setOtpPage] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
@@ -52,7 +53,15 @@ export default function ForgotPassword() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setEmailError(false);
+        setGeneralError('');
         setSuccessMessage('');
+        
+        // Frontend validation
+        if (!email.trim()) {
+            setEmailError(true);
+            return;
+        }
+        
         setSending(true);
 
         try {
@@ -62,12 +71,27 @@ export default function ForgotPassword() {
             setSuccessMessage('🎉 Reset code sent! Check your email.');
             setTimeout(() => setOtpPage(true), 1500);
         } catch (error) {
-            console.error("Forgot password error:", error);
-            if (error.response?.status === 404) {
-                setEmailError(true);
+            if (error.response) {
+                if (error.response.status === 404) {
+                    setEmailError(true);
+                } else if (error.response.status === 400) {
+                    const message = error.response.data.message || '';
+                    if (message.toLowerCase().includes('required') || message.toLowerCase().includes('email')) {
+                        setEmailError(true);
+                    } else {
+                        setGeneralError(message || 'An error occurred.');
+                    }
+                } else if (error.response.status === 500) {
+                    setGeneralError('⚠️ Server error. Please try again later.');
+                } else {
+                    setGeneralError(error.response.data.message || 'An error occurred.');
+                }
+            } else if (error.request) {
+                setGeneralError('⚠️ Network Error: Unable to connect to server. Please check your internet connection.');
             } else {
-                setEmailError(true);
+                setGeneralError('⚠️ An unexpected error occurred. Please try again.');
             }
+            console.error("Forgot password error:", error);
         } finally {
             setSending(false);
         }
@@ -193,7 +217,12 @@ export default function ForgotPassword() {
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
                                 </div>
-                                {emailError && <p className='text-red-400 text-sm mt-1'>Email not found.</p>}
+                                {emailError && <p className='text-red-400 text-sm mt-1'>{!email.trim() ? '⚠️ Email is required.' : '⚠️ Email not found. Please check and try again.'}</p>}
+                                {generalError && (
+                                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm py-2 px-3 rounded-lg">
+                                        {generalError}
+                                    </div>
+                                )}
                                 {successMessage && <p className='text-green-400 text-sm'>{successMessage}</p>}
                                 <button 
                                     type="submit" 
