@@ -1,8 +1,12 @@
 import dotenv from "dotenv";
 import app from "./app.js";
 import connectDB from "./config/db.js";
+import { validateEnvVariables } from "./middlewares/security.middleware.js";
 
 dotenv.config();
+
+// Validate environment variables before starting
+validateEnvVariables();
 
 connectDB();
 

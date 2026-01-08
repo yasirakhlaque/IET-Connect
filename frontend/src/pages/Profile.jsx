@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { ThemeContext } from "../App";
-import { FaEdit, FaMoon, FaSun, FaDownload, FaStar, FaLightbulb } from "react-icons/fa";
+import { FaEdit, FaMoon, FaSun, FaDownload, FaStar, FaLightbulb, FaExclamationTriangle } from "react-icons/fa";
 import EditProfileForm from "../components/EditProfileForm";
 import { questionPaperAPI, featureRequestAPI } from "../lib/api";
 
@@ -231,6 +231,22 @@ export default function Profile() {
                                             {user.rollno || 'N/A'}
                                         </span>
                                     </div>
+
+                                    {user.branch && (
+                                        <div className={`flex items-center justify-between py-2 border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
+                                            }`}>
+                                            <span className={`${theme === "dark" ? "text-gray-400" : "text-gray-600"
+                                                }`}>
+                                                Branch
+                                            </span>
+                                            <span className={`px-3 py-1 rounded-lg font-medium ${theme === "dark"
+                                                ? "bg-teal-500/20 text-teal-300 border border-teal-500/30"
+                                                : "bg-teal-100 text-teal-700 border border-teal-200"
+                                                }`}>
+                                                {user.branch}
+                                            </span>
+                                        </div>
+                                    )}
 
                                     <div className={`flex items-center justify-between py-2 border-b ${theme === "dark" ? "border-white/10" : "border-gray-200"
                                         }`}>
@@ -528,6 +544,7 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                 semester: item.semester,
                 date: item.createdAt,
                 status: item.approvalStatus,
+                rejectionReason: item.rejectionReason, // Add rejection reason
             };
 
     return (
@@ -590,6 +607,26 @@ function ActivityCard({ item, type, theme, getStatusColor }) {
                             }`}>
                             {data.subject} - {data.branch} - Sem {data.semester}
                         </p>
+                    )}
+
+                    {/* Rejection Reason - Show only for rejected uploads */}
+                    {type === "upload" && data.status === "Rejected" && data.rejectionReason && (
+                        <div className={`mt-3 p-3 rounded-lg border ${theme === "dark"
+                            ? "bg-red-500/10 border-red-500/30"
+                            : "bg-red-50 border-red-200"
+                            }`}>
+                            <div className="flex items-start gap-2">
+                                <FaExclamationTriangle className={`mt-0.5 flex-shrink-0 ${theme === "dark" ? "text-red-400" : "text-red-600"}`} />
+                                <div>
+                                    <p className={`text-xs font-semibold mb-1 ${theme === "dark" ? "text-red-300" : "text-red-700"}`}>
+                                        Rejection Reason:
+                                    </p>
+                                    <p className={`text-xs ${theme === "dark" ? "text-red-200" : "text-red-600"}`}>
+                                        {data.rejectionReason}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </div>
 

@@ -70,8 +70,7 @@ export const getAllSubjects = async (req, res) => {
   } catch (error) {
     console.error('Error fetching subjects:', error);
     res.status(500).json({ 
-      message: 'Error fetching subjects', 
-      error: error.message 
+      message: 'Error fetching subjects'
     });
   }
 };
@@ -94,8 +93,7 @@ export const getSubjectById = async (req, res) => {
   } catch (error) {
     console.error('Error fetching subject:', error);
     res.status(500).json({ 
-      message: 'Error fetching subject', 
-      error: error.message 
+      message: 'Error fetching subject'
     });
   }
 };

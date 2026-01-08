@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Student from '../models/student.model.js';
-import { sendEmail } from '../utils/mailer.js';
+import { sendEmail, getResetPasswordEmailHTML } from '../utils/mailer.js';
 
 export const signup = async (req, res) => {
   try {
@@ -70,6 +70,7 @@ export const login = async (req, res) => {
         name: student.name,
         email: student.email,
         rollno: student.rollno,
+        branch: student.branch,
         role: student.role,
         createdAt: student.createdAt,
       },
@@ -97,7 +98,11 @@ export const sendResetCode = async (req, res) => {
     student.resetCodeExpiry = Date.now() + 10 * 60 * 1000;
     await student.save();
 
-    await sendEmail(email, 'Password Reset Code', `Your code is: ${resetCode}`);
+    // Send email with HTML template
+    const htmlContent = getResetPasswordEmailHTML(resetCode);
+    const plainText = `Your password reset code is: ${resetCode}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this, please ignore this email.`;
+    
+    await sendEmail(email, 'Password Reset Code - IET Connect', plainText, htmlContent);
     res.json({ message: 'Reset code sent' });
   } catch (err) {
     console.error("RESET CODE ERROR:", err);
@@ -155,6 +160,7 @@ export const updateProfile = async (req, res) => {
         name: student.name,
         email: student.email,
         rollno: student.rollno,
+        branch: student.branch,
       },
     });
   } catch (err) {

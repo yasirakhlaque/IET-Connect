@@ -1,7 +1,7 @@
 import multer from 'multer';
 import QuestionPaper from '../models/questionpaper.model.js';
 import Student from '../models/student.model.js';
-import { uploadToCloudinary, deleteFromCloudinary } from '../services/cloudinary.service.js';
+import { uploadToCloudinary} from '../services/cloudinary.service.js';
 
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
@@ -98,16 +98,15 @@ export const uploadQuestionPaper = async (req, res) => {
   } catch (error) {
     console.error('Error uploading question paper:', error);
     res.status(500).json({ 
-      message: 'Error uploading question paper', 
-      error: error.message 
+      message: 'Error uploading question paper'
     });
   }
 };
 
-// Get all approved question papers
+// Get all approved question papers (with pagination)
 export const getQuestionPapers = async (req, res) => {
   try {
-    const { branch, semester, subject, year, type } = req.query;
+    const { branch, semester, subject, year, type, page = 1, limit = 20 } = req.query;
 
     const filter = { approvalStatus: 'Approved' };
     
@@ -117,22 +116,39 @@ export const getQuestionPapers = async (req, res) => {
     if (year) filter.year = parseInt(year);
     if (type) filter.type = type;
 
+    // Pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get total count for pagination metadata
+    const total = await QuestionPaper.countDocuments(filter);
+
+    // Fetch paginated results
     const questionPapers = await QuestionPaper.find(filter)
       .populate('uploadedBy', 'name rollno email')
       .populate('subject', 'name branch semester credits code')
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
       .lean();
 
     res.json({
       message: 'Question papers fetched successfully',
-      count: questionPapers.length,
       questionPapers,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        totalItems: total,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < Math.ceil(total / limitNum),
+        hasPrevPage: pageNum > 1,
+      },
     });
   } catch (error) {
     console.error('Error fetching question papers:', error);
     res.status(500).json({ 
-      message: 'Error fetching question papers', 
-      error: error.message 
+      message: 'Error fetching question papers'
     });
   }
 };
@@ -164,31 +180,49 @@ export const getQuestionPaperById = async (req, res) => {
   } catch (error) {
     console.error('Error fetching question paper:', error);
     res.status(500).json({ 
-      message: 'Error fetching question paper', 
-      error: error.message 
+      message: 'Error fetching question paper'
     });
   }
 };
 
-// Get user's uploads
+// Get user's uploads (with pagination)
 export const getMyUploads = async (req, res) => {
   try {
+    const { page = 1, limit = 20 } = req.query;
+    
+    // Pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Get total count
+    const total = await QuestionPaper.countDocuments({ uploadedBy: req.user.id });
+
+    // Fetch paginated results
     const questionPapers = await QuestionPaper.find({ uploadedBy: req.user.id })
       .populate('uploadedBy', 'name rollno email')
       .populate('subject', 'name branch semester credits code')
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limitNum)
       .lean();
 
     res.json({
       message: 'Your uploads fetched successfully',
-      count: questionPapers.length,
       questionPapers,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        totalItems: total,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < Math.ceil(total / limitNum),
+        hasPrevPage: pageNum > 1,
+      },
     });
   } catch (error) {
     console.error('Error fetching user uploads:', error);
     res.status(500).json({ 
-      message: 'Error fetching uploads', 
-      error: error.message 
+      message: 'Error fetching uploads'
     });
   }
 };
@@ -213,7 +247,6 @@ export const viewQuestionPaper = async (req, res) => {
     console.error("Error viewing question paper:", error);
     res.status(500).json({
       message: "Error viewing question paper",
-      error: error.message,
     });
   }
 };
@@ -266,14 +299,18 @@ export const downloadQuestionPaper = async (req, res) => {
     console.error("Error downloading question paper:", error);
     res.status(500).json({
       message: "Error downloading question paper",
-      error: error.message,
     });
   }
 };
 
-// Get user's download history
+// Get user's download history (with pagination)
 export const getMyDownloads = async (req, res) => {
   try {
+    const { page = 1, limit = 20 } = req.query;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
     const student = await Student.findById(req.user.id)
       .populate({
         path: 'downloadHistory.questionPaper',
@@ -289,24 +326,36 @@ export const getMyDownloads = async (req, res) => {
     }
 
     // Filter out null values (in case papers were deleted)
-    const downloads = student.downloadHistory
+    const allDownloads = student.downloadHistory
       .filter(item => item.questionPaper)
+      .sort((a, b) => new Date(b.downloadedAt) - new Date(a.downloadedAt));
+
+    // Apply pagination
+    const total = allDownloads.length;
+    const downloads = allDownloads
+      .slice(skip, skip + limitNum)
       .map(item => ({
         id: item._id,
         questionPaper: item.questionPaper,
         downloadedAt: item.downloadedAt,
-      }))
-      .sort((a, b) => new Date(b.downloadedAt) - new Date(a.downloadedAt));
+      }));
 
     res.json({
       message: 'Download history retrieved successfully',
       downloads,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        totalItems: total,
+        itemsPerPage: limitNum,
+        hasNextPage: pageNum < Math.ceil(total / limitNum),
+        hasPrevPage: pageNum > 1,
+      },
     });
   } catch (error) {
     console.error('Error fetching download history:', error);
     res.status(500).json({
       message: 'Error fetching download history',
-      error: error.message,
     });
   }
 };

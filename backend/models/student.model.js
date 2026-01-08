@@ -26,6 +26,12 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    branch: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      default: null,
+    },
     role: {
       type: String,
       enum: ['student'],
@@ -55,10 +61,21 @@ const studentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Add indexes for better query performance
+// Note: email and rollno already have indexes from unique: true
+studentSchema.index({ branch: 1 }); // For branch-based filtering
+studentSchema.index({ createdAt: -1 }); // For sorting by join date
+
 
 studentSchema.pre('save', function (next) {
   if (this.rollno) {
     this.rollno = this.rollno.toUpperCase();
+    
+    // Extract branch from roll number (e.g., 23CSE137 -> CSE)
+    const branchMatch = this.rollno.match(/^\d{2}([A-Z]{2,4})\d{2,3}$/);
+    if (branchMatch && branchMatch[1]) {
+      this.branch = branchMatch[1];
+    }
   }
   next();
 });
