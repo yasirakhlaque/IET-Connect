@@ -56,8 +56,9 @@ export default function SignUp({ setIsSignUpActive }) {
     const validate = () => {
         let isValid = true;
 
-        // Validate roll number format (e.g., 23CSE137, 23IT12, 23CSBS101)
-        const rollnoRegex = /^\d{2}[A-Z]{2,4}\d{2,3}$/i;
+        // Validate roll number format (e.g., 23CSE137)
+        // Only allow valid branches: CSE, ECE, EE, ME, CE
+        const rollnoRegex = /^\d{2}(CSE|ECE|EE|ME|CE)\d{2,3}$/i;
         if (!rollnoRegex.test(state.rollno.trim())) {
             setRollnoError(true);
             isValid = false;
@@ -72,7 +73,9 @@ export default function SignUp({ setIsSignUpActive }) {
             isValid = false;
         }
 
-        if (state.password.length < 8) {
+        // Password complexity validation
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(state.password)) {
             setPasswordError(true);
             isValid = false;
         } else {
@@ -153,7 +156,7 @@ export default function SignUp({ setIsSignUpActive }) {
                 </p>
             </div>
 
-            <form className="flex flex-col gap-4 mt-6" onSubmit={handleSubmit}>
+            <form className="flex flex-col gap-3 mt-6" onSubmit={handleSubmit}>
                 <div>
                     <div className={`flex items-center border rounded-lg px-3 py-2 transition ${theme === "dark"
                         ? "border-white/20 bg-white/5"
@@ -175,14 +178,18 @@ export default function SignUp({ setIsSignUpActive }) {
                         : "border-gray-300 bg-gray-50"
                         }`}>
                         <FaUser className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />
-                        <input type="text" name="rollno" placeholder="Roll Number (e.g. 23CSE137)"
+                        <input type="text" name="rollno" placeholder="Roll Number (e.g. 23CSE100)"
                             className={`text-xs md:text-sm outline-none w-full bg-transparent ${theme === "dark"
                                 ? "text-white placeholder-gray-400"
                                 : "text-gray-900 placeholder-gray-500"
                                 }`}
                             value={state.rollno} onChange={handleChange} />
                     </div>
-                    {rollnoError && <div className="text-red-400 text-sm mt-1">Roll number format should be like 23CSE137</div>}
+                    {rollnoError && (
+                        <div className="text-red-400 text-xs mt-1">
+                            Format: 23CSE100 (Branches: CSE, ECE, EE, ME, CE)
+                        </div>
+                    )}
                 </div>
 
                 <div>
@@ -198,7 +205,7 @@ export default function SignUp({ setIsSignUpActive }) {
                                 }`}
                             value={state.email} onChange={handleChange} />
                     </div>
-                    {emailError && <div className="text-red-400 text-sm mt-1">Email must be a valid Gmail address</div>}
+                    {emailError && <div className="text-red-400 text-xs mt-1">Must be a valid Gmail address</div>}
                 </div>
 
                 <div>
@@ -215,7 +222,18 @@ export default function SignUp({ setIsSignUpActive }) {
                             value={state.password} onChange={handleChange} />
                         {showPassword ? <FaEye onClick={() => setShowPassword(false)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} /> : <IoMdEyeOff onClick={() => setShowPassword(true)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />}
                     </div>
-                    {passwordError && <div className="text-red-400 text-sm mt-1">Password should be at least 8 characters</div>}
+                    {passwordError && (
+                        <div className="text-red-400 text-xs mt-1">
+                            <div className="font-medium mb-1">Password must have:</div>
+                            <ul className="list-disc list-inside ml-1 space-y-0.5">
+                                <li>8+ characters</li>
+                                <li>Uppercase (A-Z)</li>
+                                <li>Lowercase (a-z)</li>
+                                <li>Number (0-9)</li>
+                                <li>Special char (@$!%*?&)</li>
+                            </ul>
+                        </div>
+                    )}
                 </div>
 
                 <div>
@@ -232,7 +250,7 @@ export default function SignUp({ setIsSignUpActive }) {
                             value={state.confirmPassword} onChange={handleChange} />
                         {showConfirmPassword ? <FaEye onClick={() => setShowConfirmPassword(false)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} /> : <IoMdEyeOff onClick={() => setShowConfirmPassword(true)} className={theme === "dark" ? "text-gray-300 mr-2" : "text-gray-600 mr-2"} />}
                     </div>
-                    {passwordMatchError && <div className="text-red-400 text-sm mt-1">Passwords do not match</div>}
+                    {passwordMatchError && <div className="text-red-400 text-xs mt-1">Passwords do not match</div>}
                 </div>
 
                 <button className={`${theme === "dark"
@@ -242,10 +260,10 @@ export default function SignUp({ setIsSignUpActive }) {
                    {isSigningUp ? 'Signing Up...' : 'Sign Up'}
                 </button>
 
-                {submitted && <p className="text-green-400 text-center text-sm">🎉 Account created successfully! Redirecting...</p>}
-                {studentExist && <p className="text-red-400 text-sm text-center">⚠️ Student already exists with this Roll Number or Email.</p>}
+                {submitted && <p className="text-green-400 text-center text-xs">🎉 Account created! Redirecting...</p>}
+                {studentExist && <p className="text-red-400 text-xs text-center">⚠️ Student already exists with this Roll Number or Email.</p>}
                 {generalError && (
-                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm text-center py-2 px-3 rounded-lg">
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs text-center py-2 px-3 rounded-lg">
                         {generalError}
                     </div>
                 )}
