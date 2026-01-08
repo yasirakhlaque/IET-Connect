@@ -44,26 +44,3 @@ export const uploadToCloudinary = async (file, folder = "iet_connect") => {
     throw err;
   }
 };
-
-// Delete file from Cloudinary
-export const deleteFromCloudinary = async (publicId) => {
-  try {
-    if (!publicId) return null;
-    
-    // Try deleting as raw first, then as image
-    let result = await cloudinary.uploader.destroy(publicId, { 
-      resource_type: 'raw' 
-    });
-    
-    if (result.result !== 'ok') {
-      result = await cloudinary.uploader.destroy(publicId, { 
-        resource_type: 'image' 
-      });
-    }
-    
-    return result;
-  } catch (err) {
-    console.error('Cloudinary delete error:', err);
-    throw err;
-  }
-};
